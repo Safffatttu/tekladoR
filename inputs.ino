@@ -14,8 +14,12 @@ void checkInputs(){
         int pinNum = inputPins[i];
         int newState = digitalRead(pinNum);
 
-        if (newState != states[i]) {
-            states[i] = newState;
+        if (newState != switchStates[i]) {
+            switchStates[i] = newState;
+
+            states[i] = (states[i] != 1);
+            newState = states[i];
+
             int outputPin = relayPins[i];
             digitalWrite(outputPin, newState != 1);
 
