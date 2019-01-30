@@ -1,3 +1,8 @@
+#include <ESP8266WiFi.h>
+#include <constants.hpp>
+#include <inputs.hpp>
+#include <outputs.hpp>
+
 void setupInputs(){
   
   for(int i = 0; i < RELAYS_COUNT; i++)
@@ -21,12 +26,14 @@ void checkInputs(){
             newState = states[i];
 
             int outputPin = relayPins[i];
-            digitalWrite(outputPin, newState != 1);
 
+            digitalWrite(outputPin, newState != 1);
+            writeToOutput(outputPin, newState != 1);
+            
             String topic = String(deviceTopic);
             topic.concat(i);
 
-            client.publish(topic, String(newState));
+            // client.publish(topic, String(newState));
         }
     }
 }
