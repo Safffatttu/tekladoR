@@ -1,21 +1,14 @@
-#include <messages.hpp>
 #include <Arduino.h>
-#include <outputs.hpp>
-#include <inputs.hpp>
+#include <messages.hpp>
+#include <io.hpp>
+
 
 void setup() {
   Serial.begin(9600);
-
-  setupOutputs();
-  setupInputs();
+  setupIO();
   setupNetwork();
-  
-  pinMode(D2, OUTPUT);
 }
 
 void loop() {
-  digitalWrite(D2, HIGH);
-  delay(100);
-  digitalWrite(D2, LOW);
-  delay(100);
+  checkInputs();
 }

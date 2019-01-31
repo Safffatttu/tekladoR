@@ -9,14 +9,11 @@
 
 #define MQTT_HOST IPAddress(192, 168, 0, 213)
 #define MQTT_PORT 1883
-#define RELAYS_COUNT 1
+
+#define EXP_ADDR_1 0x20
+#define EXP_ADDR_2 0x21
 
 extern const char* deviceTopic;
-
-extern int relayPins   [RELAYS_COUNT];
-extern int inputPins   [RELAYS_COUNT];
-extern int states      [RELAYS_COUNT];
-extern int switchStates[RELAYS_COUNT];
 
 extern AsyncMqttClient mqttClient;
 extern Ticker mqttReconnectTimer;

@@ -1,2 +1,0 @@
-void setupInputs();
-void checkInputs();

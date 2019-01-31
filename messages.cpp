@@ -3,27 +3,6 @@
 #include "Arduino.h"
 #include "AsyncMqttClient.hpp"
 
-void messageReceived(String &topic, String &payload) {
-
-  int index = topic.lastIndexOf('/');
-  int relayNumber = topic.substring(index + 1).toInt();
-  int state = payload.toInt();
-
-  if (relayNumber < 0 || relayNumber >= RELAYS_COUNT) {
-    return;
-  }
-
-  int pin = relayPins[relayNumber];
-
-  if (state > 1 || state < 0){
-    return;
-  }
-
-  states[relayNumber] = state;
-
-  digitalWrite(pin, state != 1);
-}
-
 void connectToWifi() {
   Serial.println("Connecting to Wi-Fi...");
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -106,6 +85,15 @@ void onMqttPublish(uint16_t packetId) {
   Serial.println("Publish acknowledged.");
   Serial.print("  packetId: ");
   Serial.println(packetId);
+}
+
+void publishMqtt(int number, bool state){
+  String topic = String(deviceTopic);
+  topic.concat(number);
+  
+  char * topicChar = new char[topic.length()];
+  topic.toCharArray(topicChar, topic.length());
+  mqttClient.publish(topicChar, 2, 0, (char *) state);
 }
 
 void setupNetwork() {
