@@ -1,7 +1,18 @@
-#include "constants.hpp"
 #include "messages.hpp"
-#include "Arduino.h"
 #include "AsyncMqttClient.hpp"
+#include <ESP8266WiFi.h>
+#include <Ticker.h>
+#include "constants.hpp" 
+
+AsyncMqttClient mqttClient;
+
+Ticker mqttReconnectTimer;
+Ticker wifiReconnectTimer;
+
+WiFiEventHandler wifiConnectHandler;
+WiFiEventHandler wifiDisconnectHandler;
+
+const char* deviceTopic = "room/";
 
 void connectToWifi() {
   Serial.println("Connecting to Wi-Fi...");
@@ -109,5 +120,5 @@ void setupNetwork() {
   mqttClient.setServer(MQTT_HOST, MQTT_PORT);
   connectToWifi();
 
-  mqttClient.subscribe("room/", 2);
+  mqttClient.subscribe("a", 0);
 }
