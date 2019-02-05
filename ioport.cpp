@@ -1,46 +1,47 @@
 #include <ioport.hpp>
 #include <Arduino.h>
-#include <constants.hpp>
 
 MCP23017 mcp1 = MCP23017(EXP_ADDR_1);
 MCP23017 mcp2 = MCP23017(EXP_ADDR_2);
 
 int IOPORT::portRead(){
     int newState;
-    if (dev == local){
-        newState = digitalRead(port);
+    if (dev == IODevice::local){
+        newState = digitalRead(pin);
     }
-    else if (dev == expander1){
-        newState = mcp1.digitalRead(port);
+    else if (dev == IODevice::expander1){
+        newState = mcp1.digitalRead(pin);
     }
     else{
-        newState = mcp2.digitalRead(port);
+        newState = mcp2.digitalRead(pin);
     }
 
     return newState;
 }
 
 void IOPORT::portWrite(uint8_t state){
-    if (dev == local){
-        digitalWrite(port, state);
+    if (dev == IODevice::local){
+        digitalWrite(pin, state);
     }
-    else if (dev == expander1){
-        mcp1.digitalWrite(port, state);
+    else if (dev == IODevice::expander1){
+        mcp1.digitalWrite(pin, state);
     }
     else{
-        mcp2.digitalWrite(port, state);
+        mcp2.digitalWrite(pin, state);
     }
 }
 
 void IOPORT::setup(){
-    if (dev == local){
-        pinMode(port, type);
+    uint8_t t = static_cast<uint8_t> (type);
+    
+    if (dev == IODevice::local){
+        pinMode(pin, t);
     }
-    else if (dev == expander1){
-        mcp1.pinMode(port, !type);
+    else if (dev == IODevice::expander1){
+        mcp1.pinMode(pin, t);
     }
     else{
-        mcp2.pinMode(port, !type);
+        mcp2.pinMode(pin, t);
     }
 }
 

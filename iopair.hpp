@@ -3,7 +3,7 @@
 
 class IOPair {
     public:
-        IOPair(IOPORT i, IOPORT o, int n);
+        IOPair(IOPORT* i, IOPORT* o, int n);
          
         void setup();
         void changeState(int state);
@@ -11,7 +11,10 @@ class IOPair {
         void checkState();
     private:
         bool state;
-        IOPORT inputPort;
-        IOPORT outputPort;
+        bool inputState;
+        bool firstCycle;
+        
+        IOPORT* inputPort;
+        IOPORT* outputPort;
         int number;
 };

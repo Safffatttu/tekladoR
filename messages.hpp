@@ -9,6 +9,8 @@
 #define MQTT_HOST IPAddress(192, 168, 0, 213)
 #define MQTT_PORT 1883
 
+extern AsyncMqttClient mqttClient; 
+
 void connectToWifi();
 void connectToMqtt();
 void onWifiConnect(const WiFiEventStationModeGotIP &event);
