@@ -12,7 +12,7 @@ Ticker wifiReconnectTimer;
 WiFiEventHandler wifiConnectHandler;
 WiFiEventHandler wifiDisconnectHandler;
 
-const char* deviceTopic = "room/";
+const char* deviceTopic = "hall/";
 
 void connectToWifi() {
   Serial.println("Connecting to Wi-Fi...");
@@ -48,14 +48,7 @@ void subscribeToPairs(){
 
 void onMqttConnect(bool sessionPresent) {
   subscribeToPairs();
-  
-  Serial.println("Connected to MQTT.");
-  Serial.print("Session present: ");
-  Serial.println(sessionPresent);
-  uint16_t packetIdSub = mqttClient.subscribe("test/lol", 2);
-  Serial.print("Subscribing at QoS 2, packetId: ");
-  Serial.println(packetIdSub);
-  mqttClient.publish("testTopic", 2, false, "reconnected");
+    mqttClient.publish("testTopic", 2, false, "reconnected");
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -83,15 +76,14 @@ void onMqttUnsubscribe(uint16_t packetId) {
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
   size_t topicLen = sizeof(deviceTopic);
   char* topicEnd = topic + topicLen + 1;
-  Serial.println(topicEnd);
-  int chanelNumber = strtoul(topicEnd, nullptr, 10);
+  int channelNumber = strtoul(topicEnd, nullptr, 10);
   int newState = atoi(payload);
 
-  if (newState < 0 || newState > 8){
-    return;
+  if (channelNumber >= 0 && channelNumber <= 7){
+    if(newState == 0 || newState == 1){
+      io[channelNumber].changeState(newState);
+    } 
   }
-
-  io[chanelNumber].changeState(newState);
 
   Serial.println("Publish received.");
   Serial.print("  topic: ");
@@ -129,8 +121,6 @@ void publishMqtt(int number, bool state){
   mqttClient.publish(publishToChar, 2, 0, stateToPublish);
   Serial.println(publishToChar);
   Serial.println(stateToPublish);
-  delete [] publishToChar;
-  delete [] stateToPublish;
 }
 
 void setupNetwork() {
