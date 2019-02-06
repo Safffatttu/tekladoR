@@ -25,7 +25,6 @@ void IOPair::changeState(int newState){
 
 void IOPair::checkState(){
     bool newState = (bool) (*inputPort).portRead();
-
     if (newState != inputState){
         if (firstCycle){
             firstCycle = false;

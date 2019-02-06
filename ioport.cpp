@@ -1,8 +1,7 @@
 #include <ioport.hpp>
 #include <Arduino.h>
 
-MCP23017 mcp1 = MCP23017(EXP_ADDR_1);
-MCP23017 mcp2 = MCP23017(EXP_ADDR_2);
+Adafruit_MCP23017 mcp1;
 
 int IOPORT::portRead(){
     int newState;
@@ -11,9 +10,6 @@ int IOPORT::portRead(){
     }
     else if (dev == IODevice::expander1){
         newState = mcp1.digitalRead(pin);
-    }
-    else{
-        newState = mcp2.digitalRead(pin);
     }
 
     return newState;
@@ -26,9 +22,6 @@ void IOPORT::portWrite(uint8_t state){
     else if (dev == IODevice::expander1){
         mcp1.digitalWrite(pin, state);
     }
-    else{
-        mcp2.digitalWrite(pin, state);
-    }
 }
 
 void IOPORT::setup(){
@@ -40,9 +33,4 @@ void IOPORT::setup(){
     else if (dev == IODevice::expander1){
         mcp1.pinMode(pin, t);
     }
-    else{
-        mcp2.pinMode(pin, t);
-    }
 }
-
-
