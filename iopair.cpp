@@ -20,7 +20,7 @@ void IOPair::setup(){
 
 void IOPair::changeState(int newState){
     state = (bool) newState;
-    (*inputPort).portWrite(newState);
+    (*outputPort).portWrite(newState);
 }
 
 void IOPair::checkState(){
