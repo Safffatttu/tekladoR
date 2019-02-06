@@ -37,12 +37,12 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
 
 void subscribeToPairs(){
     for(auto&& pair : io){
-    std::string subscribe = deviceTopic;
-    char buff[10];
-    itoa(pair.number, buff, 10);
-    subscribe.append(std::string(buff));
-    mqttClient.subscribe(subscribe.c_str(),2);
-    Serial.println(subscribe.c_str());
+      std::string subscribe = deviceTopic;
+      char buff[10];
+      itoa(pair.number, buff, 10);
+      subscribe.append(std::string(buff));
+      mqttClient.subscribe(subscribe.c_str(),2);
+      Serial.println(subscribe.c_str());
   }
 }
 
@@ -55,14 +55,7 @@ void onMqttConnect(bool sessionPresent) {
   uint16_t packetIdSub = mqttClient.subscribe("test/lol", 2);
   Serial.print("Subscribing at QoS 2, packetId: ");
   Serial.println(packetIdSub);
-  mqttClient.publish("test/lol", 0, true, "test 1");
-  Serial.println("Publishing at QoS 0");
-  uint16_t packetIdPub1 = mqttClient.publish("test/lol", 1, true, "test 2");
-  Serial.print("Publishing at QoS 1, packetId: ");
-  Serial.println(packetIdPub1);
-  uint16_t packetIdPub2 = mqttClient.publish("test/lol", 2, true, "test 3");
-  Serial.print("Publishing at QoS 2, packetId: ");
-  Serial.println(packetIdPub2);
+  mqttClient.publish("testTopic", 2, false, "reconnected");
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -88,6 +81,18 @@ void onMqttUnsubscribe(uint16_t packetId) {
 }
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
+  size_t topicLen = sizeof(deviceTopic);
+  char* topicEnd = topic + topicLen + 1;
+  Serial.println(topicEnd);
+  int chanelNumber = strtoul(topicEnd, nullptr, 10);
+  int newState = atoi(payload);
+
+  if (newState < 0 || newState > 8){
+    return;
+  }
+
+  io[chanelNumber].changeState(newState);
+
   Serial.println("Publish received.");
   Serial.print("  topic: ");
   Serial.println(topic);
@@ -112,12 +117,12 @@ void onMqttPublish(uint16_t packetId) {
 }
 
 void publishMqtt(int number, bool state){
-  std::string publishTo = deviceTopic;
+  std::string publishTo = std::string(deviceTopic);
   char buff[10];
   itoa((int) number, buff, 10);
   publishTo.append(std::string(buff));
-
   const char* publishToChar = publishTo.c_str();
+
   char* stateToPublish = new char[2];
   itoa((int) state, stateToPublish, 10);
 
