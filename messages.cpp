@@ -2,7 +2,7 @@
 #include "AsyncMqttClient.hpp"
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
-#include "constants.hpp" 
+#include <io.hpp>
 
 AsyncMqttClient mqttClient;
 
@@ -35,7 +35,20 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
  wifiReconnectTimer.once(2, connectToWifi);
 }
 
+void subscribeToPairs(){
+    for(auto&& pair : io){
+    std::string subscribe = deviceTopic;
+    char buff[10];
+    itoa(pair.number, buff, 10);
+    subscribe.append(std::string(buff));
+    mqttClient.subscribe(subscribe.c_str(),2);
+    Serial.println(subscribe.c_str());
+  }
+}
+
 void onMqttConnect(bool sessionPresent) {
+  subscribeToPairs();
+  
   Serial.println("Connected to MQTT.");
   Serial.print("Session present: ");
   Serial.println(sessionPresent);
@@ -99,17 +112,27 @@ void onMqttPublish(uint16_t packetId) {
 }
 
 void publishMqtt(int number, bool state){
-  String topic = String(deviceTopic);
-  topic.concat(number);
-  
-  char * topicChar = new char[topic.length()];
-  topic.toCharArray(topicChar, topic.length());
-  mqttClient.publish(topicChar, 2, 0, (char *) state);
+  std::string publishTo = deviceTopic;
+  char buff[10];
+  itoa((int) number, buff, 10);
+  publishTo.append(std::string(buff));
+
+  const char* publishToChar = publishTo.c_str();
+  char* stateToPublish = new char[2];
+  itoa((int) state, stateToPublish, 10);
+
+  mqttClient.publish(publishToChar, 2, 0, stateToPublish);
+  Serial.println(publishToChar);
+  Serial.println(stateToPublish);
+  delete [] publishToChar;
+  delete [] stateToPublish;
 }
 
 void setupNetwork() {
   wifiConnectHandler = WiFi.onStationModeGotIP(onWifiConnect);
   wifiDisconnectHandler = WiFi.onStationModeDisconnected(onWifiDisconnect);
+  WiFi.mode(WiFiMode::WIFI_STA);
+  connectToWifi(); 
 
   mqttClient.onConnect(onMqttConnect);
   mqttClient.onDisconnect(onMqttDisconnect);
@@ -118,7 +141,4 @@ void setupNetwork() {
   mqttClient.onMessage(onMqttMessage);
   mqttClient.onPublish(onMqttPublish);
   mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-  connectToWifi();
-
-  mqttClient.subscribe("a", 0);
 }

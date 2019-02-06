@@ -9,6 +9,8 @@ class IOPair {
         void changeState(int state);
         void switchState();        
         void checkState();
+
+        int number;
     private:
         bool state;
         bool inputState;
@@ -16,5 +18,4 @@ class IOPair {
         
         IOPORT* inputPort;
         IOPORT* outputPort;
-        int number;
 };
