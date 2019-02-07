@@ -1,5 +1,5 @@
 #include <Ticker.h>
-#include <ioport.hpp>
+#include <iopair.hpp>
 #include <animation.hpp>
 
 void Animation::nextStep()
@@ -21,9 +21,9 @@ void Animation::nextStep()
 
     for (size_t i = 0; i < currentAnimation.size; i++)
     {
-        IOPORT port = currentAnimation.ports[i];
+        IOPair pair = currentAnimation.pairs[i];
         bool newValue = currentAnimation.steps[currentAnimation.stepNumber][i];
-        port.portWrite(newValue);
+        pair.changeState(newValue);
     }
 }
 
@@ -32,4 +32,9 @@ void Animation::startAnimation()
     currentAnimation = *this;
     animationTicker.attach(stepTime, nextStep);
     stepNumber = 0;
+}
+
+void Animation::stop()
+{
+    animationTicker.detach();
 }

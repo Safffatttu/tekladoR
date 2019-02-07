@@ -1,12 +1,13 @@
-#include <ioport.hpp>
+#include <iopair.hpp>
 #include <Ticker.h>
+#include <array>
 
 class Animation
 {
   private:
-    IOPORT *ports;
+    IOPair *pairs;
     uint size;
-    bool **steps;
+    std::array<std::array<bool, 2>, 2> steps;
     uint lenght;
     bool loop;
     float stepTime;
@@ -18,7 +19,8 @@ class Animation
 
   public:
     void startAnimation();
-
-    Animation(IOPORT *ports, uint size, bool **steps, uint lenght, bool loop, float stepTime)
-        : ports(ports), size(size), steps(steps), lenght(lenght), loop(loop), stepTime(stepTime) {}
+    void stop();
+    
+    Animation(uint size, std::array<std::array<bool, 2>, 2> steps, uint lenght, bool loop, float stepTime)
+        : size(size), steps(steps), lenght(lenght), loop(loop), stepTime(stepTime) {}
 };
