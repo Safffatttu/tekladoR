@@ -16,6 +16,11 @@ void AnimationStore::runAnimation(uint number)
     animations[number].start();
 }
 
-void AnimationStore::addAnimation(std::string data){
-    
+void AnimationStore::addAnimation(std::string data)
+{
+}
+
+uint AnimationStore::animationCount()
+{
+    return animations.size();
 }

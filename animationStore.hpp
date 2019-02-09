@@ -22,4 +22,5 @@ class AnimationStore
     void setup();
     void addAnimation(std::string data);
     void runAnimation(uint number);
+    uint animationCount();
 };

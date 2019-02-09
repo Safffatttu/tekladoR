@@ -117,6 +117,15 @@ void parseAnimationMessage(std::string topic, char* payload)
   }
 }
 
+void updateAnimationCount()
+{
+  uint count = AnimationStore::getInstance()->animationCount();
+  char countChar[5];
+  itoa(count, countChar, 10);
+  std::string topic = std::string(deviceTopic).append("animation/count");
+  mqttClient.publish(topic.c_str(), 1, true, countChar);
+}
+
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
 {
   std::string topicString = std::string(topic);
@@ -129,6 +138,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   else if (topicString.find("checkState") != std::string::npos)
   {
     updateMqttState();
+  }
+  else if (topicString.find("animation/count") != std::string::npos)
+  {
+    updateAnimationCount();
   }
   else
   {
