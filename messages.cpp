@@ -3,6 +3,7 @@
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
 #include <io.hpp>
+#include <animationStore.hpp>
 
 AsyncMqttClient mqttClient;
 
@@ -46,9 +47,16 @@ void subscribeToPairs(){
   }
 }
 
+void subscribeToAnimations(){
+  std::string subscribe = deviceTopic;
+  subscribe.append("animation/#");
+  mqttClient.subscribe(subscribe.c_str(),2);
+}
+
 void onMqttConnect(bool sessionPresent) {
   subscribeToPairs();
-    mqttClient.publish("testTopic", 2, false, "reconnected");
+  subscribeToAnimations();
+  mqttClient.publish("testTopic", 2, false, "reconnected");
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -73,7 +81,7 @@ void onMqttUnsubscribe(uint16_t packetId) {
   Serial.println(packetId);
 }
 
-void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
+void parseIoMessage(char* topic, char* payload){
   size_t topicLen = sizeof(deviceTopic);
   char* topicEnd = topic + topicLen + 1;
   int channelNumber = strtoul(topicEnd, nullptr, 10);
@@ -83,6 +91,36 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     if(newState == 0 || newState == 1){
       io[channelNumber].changeState(newState);
     } 
+  }
+}
+
+void parseAnimationMessage(std::string topic, char* payload)
+{
+  std::size_t foundNewAnimation = topic.find("new");
+
+  if (foundNewAnimation != std::string::npos)
+  {
+    AnimationStore::getInstance()->addAnimation(std::string(payload));
+  }
+  else
+  {
+    int animationNumber = atoi(payload);
+    AnimationStore::getInstance()->runAnimation(animationNumber);
+  }
+}
+
+void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
+{
+  std::string topicString = std::string(topic);
+  std::size_t foundAnimation = topicString.find("animation");
+
+  if(foundAnimation != std::string::npos)
+  {
+    parseAnimationMessage(topicString, payload);
+  }
+  else
+  {
+    parseIoMessage(topic, payload);
   }
 
   Serial.println("Publish received.");
