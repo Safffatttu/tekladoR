@@ -201,7 +201,6 @@ void setupNetwork() {
   wifiConnectHandler = WiFi.onStationModeGotIP(onWifiConnect);
   wifiDisconnectHandler = WiFi.onStationModeDisconnected(onWifiDisconnect);
   WiFi.mode(WiFiMode::WIFI_STA);
-  connectToWifi(); 
 
   mqttClient.onConnect(onMqttConnect);
   mqttClient.onDisconnect(onMqttDisconnect);
@@ -211,4 +210,6 @@ void setupNetwork() {
   mqttClient.onPublish(onMqttPublish);
   mqttClient.setServer(MQTT_HOST, MQTT_PORT);
   mqttClient.setWill(std::string(deviceTopic).append("/deviceState").c_str(), 2, true, "disconnected");
+
+  connectToWifi();
 }
