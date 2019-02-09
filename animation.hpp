@@ -5,10 +5,8 @@
 class Animation
 {
   private:
-    IOPair *pairs;
-    uint size;
-    std::array<std::array<bool, 2>, 2> steps;
-    uint lenght;
+    std::vector<IOPair> pairs;
+    std::vector<std::vector<bool>> steps;
     bool loop;
     float stepTime;
     uint stepNumber;
@@ -21,6 +19,6 @@ class Animation
     void start();
     static void stop();
 
-    Animation(uint size, std::array<std::array<bool, 2>, 2> steps, uint lenght, bool loop, float stepTime)
-        : size(size), steps(steps), lenght(lenght), loop(loop), stepTime(stepTime) {}
+    Animation(std::vector<IOPair> pairs, uint size, std::vector<std::vector<bool>> steps, uint lenght, bool loop, float stepTime)
+        : pairs(pairs), steps(steps), loop(loop), stepTime(stepTime) {}
 };

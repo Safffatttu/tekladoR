@@ -6,7 +6,7 @@ void Animation::nextStep()
 {
     currentAnimation->stepNumber++;
 
-    if (currentAnimation->stepNumber < currentAnimation->lenght)
+    if (currentAnimation->stepNumber < currentAnimation->steps.size())
     {
         if (currentAnimation->loop)
         {
@@ -19,15 +19,17 @@ void Animation::nextStep()
         }
     }
 
-    for (size_t i = 0; i < currentAnimation->size; i++)
+    for (size_t i = 0; i < currentAnimation->pairs.size(); i++)
     {
         IOPair pair = currentAnimation->pairs[i];
         bool newValue = currentAnimation->steps[currentAnimation->stepNumber][i];
         pair.changeState(newValue);
     }
 }
+
 Ticker Animation::animationTicker = Ticker();
 Animation *Animation::currentAnimation = nullptr;
+
 void Animation::start()
 {
     Animation::currentAnimation = this;
