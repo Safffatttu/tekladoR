@@ -94,6 +94,14 @@ void parseIoMessage(char* topic, char* payload){
   }
 }
 
+void updateMqttState()
+{
+  for(auto&& pair : io)
+  {
+    pair.updateMqttState();
+  }
+}
+
 void parseAnimationMessage(std::string topic, char* payload)
 {
   std::size_t foundNewAnimation = topic.find("new");
@@ -114,9 +122,13 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   std::string topicString = std::string(topic);
   std::size_t foundAnimation = topicString.find("animation");
 
-  if(foundAnimation != std::string::npos)
+  if (foundAnimation != std::string::npos)
   {
     parseAnimationMessage(topicString, payload);
+  }
+  else if (topicString.find("checkState") != std::string::npos)
+  {
+    updateMqttState();
   }
   else
   {
