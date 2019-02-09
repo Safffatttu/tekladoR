@@ -56,7 +56,7 @@ void subscribeToAnimations(){
 void onMqttConnect(bool sessionPresent) {
   subscribeToPairs();
   subscribeToAnimations();
-  mqttClient.publish("testTopic", 2, false, "reconnected");
+  mqttClient.publish("deviceState", 2, true, "reconnected");
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -123,7 +123,7 @@ void updateAnimationCount()
   char countChar[5];
   itoa(count, countChar, 10);
   std::string topic = std::string(deviceTopic).append("animation/count");
-  mqttClient.publish(topic.c_str(), 1, true, countChar);
+  mqttClient.publish(topic.c_str(), 2, true, countChar);
 }
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
