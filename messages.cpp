@@ -181,7 +181,7 @@ void publishMqtt(int number, bool state){
   char* stateToPublish = new char[2];
   itoa((int) state, stateToPublish, 10);
 
-  mqttClient.publish(publishToChar, 2, 0, stateToPublish);
+  mqttClient.publish(publishToChar, 2, true, stateToPublish);
   Serial.println(publishToChar);
   Serial.println(stateToPublish);
 }

@@ -16,7 +16,7 @@ void IOPair::setup()
 {
     inputPort->setup();
     outputPort->setup();
-    outputPort->portWrite(1);
+    outputPort->portWrite((uint8_t) state);
     inputState = (bool)inputPort->portRead();
 }
 
