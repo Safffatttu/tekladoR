@@ -7,8 +7,9 @@ class IOPair {
          
         void setup();
         void changeState(int state);
-        void switchState();        
+        void switchState();
         void checkState();
+        void updateMqttState();
 
         int number;
     private:

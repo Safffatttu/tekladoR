@@ -41,3 +41,7 @@ void IOPair::switchState(){
     state = !state;
     (*outputPort).portWrite((int) state);
 }
+
+void IOPair::updateMqttState(){
+    publishMqtt(number, state);
+}
