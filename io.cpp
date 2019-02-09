@@ -2,29 +2,29 @@
 #include <io.hpp>
 #include <Arduino.h>
 
-IOPORT ai = {IODevice::expander1, 0, IOType::input};
-IOPORT ao = {IODevice::local, 16, IOType::output};
+IOPort ai = IOPort(IODevice::expander1, 0, IOType::input);
+IOPort ao = IOPort(IODevice::local, 16, IOType::output);
 
-IOPORT bi = {IODevice::expander1, 1, IOType::input};
-IOPORT bo = {IODevice::local, 0, IOType::output};
+IOPort bi = IOPort(IODevice::expander1, 1, IOType::input);
+IOPort bo = IOPort(IODevice::local, 0, IOType::output);
 
-IOPORT ci = {IODevice::expander1, 2, IOType::input};
-IOPORT co = {IODevice::local, 2, IOType::output};
+IOPort ci = IOPort(IODevice::expander1, 2, IOType::input);
+IOPort co = IOPort(IODevice::local, 2, IOType::output);
 
-IOPORT Di = {IODevice::expander1, 3, IOType::input};
-IOPORT Do = {IODevice::local, 14, IOType::output};
+IOPort Di = IOPort(IODevice::expander1, 3, IOType::input);
+IOPort Do = IOPort(IODevice::local, 14, IOType::output);
 
-IOPORT ei = {IODevice::expander1, 4, IOType::input};
-IOPORT eo = {IODevice::local, 12, IOType::output};
+IOPort ei = IOPort(IODevice::expander1, 4, IOType::input);
+IOPort eo = IOPort(IODevice::local, 12, IOType::output);
 
-IOPORT fi = {IODevice::expander1, 5, IOType::input};
-IOPORT fo = {IODevice::local, 13, IOType::output};
+IOPort fi = IOPort(IODevice::expander1, 5, IOType::input);
+IOPort fo = IOPort(IODevice::local, 13, IOType::output);
 
-IOPORT gi = {IODevice::expander1, 6, IOType::input};
-IOPORT go = {IODevice::local, 15, IOType::output};
+IOPort gi = IOPort(IODevice::expander1, 6, IOType::input);
+IOPort go = IOPort(IODevice::local, 15, IOType::output);
 
-IOPORT hi = {IODevice::expander1, 7, IOType::input};
-IOPORT ho = {IODevice::local, 3, IOType::output};
+IOPort hi = IOPort(IODevice::expander1, 7, IOType::input);
+IOPort ho = IOPort(IODevice::local, 3, IOType::output);
 
 IOPair io[8] = {
     IOPair(&ai, &ao, 0),

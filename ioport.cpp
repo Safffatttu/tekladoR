@@ -3,34 +3,43 @@
 
 Adafruit_MCP23017 mcp1;
 
-int IOPORT::portRead(){
+int IOPort::portRead()
+{
     int newState;
-    if (dev == IODevice::local){
+    if (device == IODevice::local)
+    {
         newState = digitalRead(pin);
     }
-    else if (dev == IODevice::expander1){
+    else if (device == IODevice::expander1)
+    {
         newState = mcp1.digitalRead(pin);
     }
 
     return newState;
 }
 
-void IOPORT::portWrite(uint8_t state){
-    if (dev == IODevice::local){
+void IOPort::portWrite(uint8_t state)
+{
+    if (device == IODevice::local)
+    {
         digitalWrite(pin, state);
     }
-    else if (dev == IODevice::expander1){
+    else if (device == IODevice::expander1)
+    {
         mcp1.digitalWrite(pin, state);
     }
 }
 
-void IOPORT::setup(){
-    uint8_t t = static_cast<uint8_t> (type);
-    
-    if (dev == IODevice::local){
+void IOPort::setup()
+{
+    uint8_t t = static_cast<uint8_t>(type);
+
+    if (device == IODevice::local)
+    {
         pinMode(pin, t);
     }
-    else if (dev == IODevice::expander1){
+    else if (device == IODevice::expander1)
+    {
         mcp1.pinMode(pin, t);
     }
 }
