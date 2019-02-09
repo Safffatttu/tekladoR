@@ -24,3 +24,8 @@ uint AnimationStore::animationCount()
 {
     return animations.size();
 }
+
+void AnimationStore::stopAnimation()
+{
+    Animation::stop();
+}

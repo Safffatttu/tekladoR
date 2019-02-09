@@ -112,8 +112,19 @@ void parseAnimationMessage(std::string topic, char* payload)
   }
   else
   {
-    int animationNumber = atoi(payload);
-    AnimationStore::getInstance()->runAnimation(animationNumber);
+    int animationControll = atoi(payload);
+    auto positionOfNumber = topic.find_last_of("/");
+    auto animationNumberString = topic.substr(positionOfNumber + 1);
+    int animationNumber = strtoul(animationNumberString.c_str(), nullptr, 10);
+    
+    if (animationControll == 0)
+    {
+      AnimationStore::getInstance()->stopAnimation();
+    }
+    else if (animationControll == 1)
+    {
+      AnimationStore::getInstance()->runAnimation(animationNumber);
+    }
   }
 }
 
