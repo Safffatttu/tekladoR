@@ -4,13 +4,13 @@
 
 void Animation::nextStep()
 {
-    currentAnimation.stepNumber++;
+    currentAnimation->stepNumber++;
 
-    if (currentAnimation.stepNumber < currentAnimation.lenght)
+    if (currentAnimation->stepNumber < currentAnimation->lenght)
     {
-        if (currentAnimation.loop)
+        if (currentAnimation->loop)
         {
-            currentAnimation.stepNumber = 0;
+            currentAnimation->stepNumber = 0;
         }
         else
         {
@@ -19,18 +19,19 @@ void Animation::nextStep()
         }
     }
 
-    for (size_t i = 0; i < currentAnimation.size; i++)
+    for (size_t i = 0; i < currentAnimation->size; i++)
     {
-        IOPair pair = currentAnimation.pairs[i];
-        bool newValue = currentAnimation.steps[currentAnimation.stepNumber][i];
+        IOPair pair = currentAnimation->pairs[i];
+        bool newValue = currentAnimation->steps[currentAnimation->stepNumber][i];
         pair.changeState(newValue);
     }
 }
-
-void Animation::startAnimation()
+Ticker Animation::animationTicker = Ticker();
+Animation *Animation::currentAnimation = nullptr;
+void Animation::start()
 {
-    currentAnimation = *this;
-    animationTicker.attach(stepTime, nextStep);
+    Animation::currentAnimation = this;
+    Animation::animationTicker.attach(stepTime, Animation::nextStep);
     stepNumber = 0;
 }
 

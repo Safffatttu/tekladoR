@@ -14,11 +14,11 @@ class Animation
     uint stepNumber;
 
     static Ticker animationTicker;
-    static Animation currentAnimation;
+    static Animation *currentAnimation;
     static void nextStep();
 
   public:
-    void startAnimation();
+    void start();
     void stop();
     
     Animation(uint size, std::array<std::array<bool, 2>, 2> steps, uint lenght, bool loop, float stepTime)
