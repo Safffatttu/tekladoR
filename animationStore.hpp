@@ -20,7 +20,7 @@ class AnimationStore
     }
 
     void setup();
-    void addAnimation(std::string data);
+    void addAnimation(char *data);
     void runAnimation(uint number);
     void stopAnimation();
     uint animationCount();

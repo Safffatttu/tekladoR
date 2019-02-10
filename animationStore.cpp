@@ -16,8 +16,9 @@ void AnimationStore::runAnimation(uint number)
     animations[number].start();
 }
 
-void AnimationStore::addAnimation(std::string data)
+void AnimationStore::addAnimation(char *data)
 {
+
 }
 
 uint AnimationStore::animationCount()
