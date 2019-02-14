@@ -4,6 +4,7 @@
 #include <Ticker.h>
 #include <io.hpp>
 #include <animationStore.hpp>
+#include <settings.hpp>
 
 AsyncMqttClient mqttClient;
 
@@ -13,11 +14,11 @@ Ticker wifiReconnectTimer;
 WiFiEventHandler wifiConnectHandler;
 WiFiEventHandler wifiDisconnectHandler;
 
-const char* deviceTopic = "hall/";
-
 void connectToWifi() {
   Serial.println("Connecting to Wi-Fi...");
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  const char *ssid = Settings::getInstance()->wifi_ssid.c_str();
+  const char *password = Settings::getInstance()->wifi_password.c_str();
+  WiFi.begin(ssid, password);
 }
 
 void connectToMqtt() {
@@ -38,7 +39,7 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
 
 void subscribeToPairs(){
     for(auto&& pair : io){
-      std::string subscribe = deviceTopic;
+      std::string subscribe = Settings::getInstance()->deviceTopic;
       char buff[10];
       itoa(pair.number, buff, 10);
       subscribe.append(std::string(buff));
@@ -48,7 +49,7 @@ void subscribeToPairs(){
 }
 
 void subscribeToAnimations(){
-  std::string subscribe = deviceTopic;
+  std::string subscribe = Settings::getInstance()->deviceTopic;
   subscribe.append("animation/#");
   mqttClient.subscribe(subscribe.c_str(),2);
 }
@@ -82,7 +83,7 @@ void onMqttUnsubscribe(uint16_t packetId) {
 }
 
 void parseIoMessage(char* topic, char* payload){
-  size_t topicLen = sizeof(deviceTopic);
+  size_t topicLen = sizeof(Settings::getInstance()->deviceTopic.c_str());
   char* topicEnd = topic + topicLen + 1;
   int channelNumber = strtoul(topicEnd, nullptr, 10);
   int newState = atoi(payload);
@@ -133,7 +134,7 @@ void updateAnimationCount()
   uint count = AnimationStore::getInstance()->animationCount();
   char countChar[5];
   itoa(count, countChar, 10);
-  std::string topic = std::string(deviceTopic).append("animation/count");
+  std::string topic = (Settings::getInstance()->deviceTopic).append("animation/count");
   mqttClient.publish(topic.c_str(), 2, true, countChar);
 }
 
@@ -183,7 +184,7 @@ void onMqttPublish(uint16_t packetId) {
 }
 
 void publishMqtt(int number, bool state){
-  std::string publishTo = std::string(deviceTopic);
+  std::string publishTo = Settings::getInstance()->deviceTopic;
   char buff[10];
   itoa((int) number, buff, 10);
   publishTo.append(std::string(buff));
@@ -208,8 +209,9 @@ void setupNetwork() {
   mqttClient.onUnsubscribe(onMqttUnsubscribe);
   mqttClient.onMessage(onMqttMessage);
   mqttClient.onPublish(onMqttPublish);
-  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-  mqttClient.setWill(std::string(deviceTopic).append("/deviceState").c_str(), 2, true, "disconnected");
-
+  mqttClient.setServer(Settings::getInstance()->mqtt_host, Settings::getInstance()->mqtt_port);
+  auto willTopic = Settings::getInstance()->deviceTopic;
+  mqttClient.setWill(willTopic.append("deviceState").c_str(), 2, true, "disconnected");
+  
   connectToWifi();
 }

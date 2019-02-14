@@ -3,12 +3,6 @@
 #include <AsyncMqttClient.hpp>
 #include <ESP8266WiFi.h>
 
-#define WIFI_SSID "***REMOVED***"
-#define WIFI_PASSWORD "***REMOVED***"
-
-#define MQTT_HOST IPAddress(192, 168, 0, 213)
-#define MQTT_PORT 1883
-
 void connectToWifi();
 void connectToMqtt();
 void onWifiConnect(const WiFiEventStationModeGotIP &event);
