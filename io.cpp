@@ -1,5 +1,6 @@
 #include <iopair.hpp>
 #include <io.hpp>
+#include <animationStore.hpp>
 #include <Arduino.h>
 
 IOPort ai = IOPort(IODevice::expander1, 0, IOType::input);
@@ -36,6 +37,12 @@ IOPair io[8] = {
     IOPair(&gi, &go, "6"),
     IOPair(&hi, &ho, "7")
 };
+
+void setupAnimations()
+{
+    Animation animationOne = Animation({ai},{ao},{{true}, {false}}, false, 0.5);
+    AnimationStore::getInstance()->addAnimation(animationOne);
+}
 
 void setupIO(){
     mcp1.begin();

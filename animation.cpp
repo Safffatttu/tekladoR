@@ -19,11 +19,11 @@ void Animation::nextStep()
         }
     }
 
-    for (size_t i = 0; i < currentAnimation->pairs.size(); i++)
+    for (size_t i = 0; i < currentAnimation->outputs.size(); i++)
     {
-        IOPair pair = currentAnimation->pairs[i];
+        IOPort port = currentAnimation->outputs[i];
         bool newValue = currentAnimation->steps[currentAnimation->stepNumber][i];
-        pair.changeState(newValue);
+        port.portWrite(newValue);
     }
 }
 
@@ -40,4 +40,32 @@ void Animation::start()
 void Animation::stop()
 {
     animationTicker.detach();
+}
+
+void Animation::checkTriggers()
+{
+    for (size_t i = 0; i < triggers.size(); i++)
+    {
+        bool newState = (bool)triggers[i].portRead();
+
+        if (newState != inputState[i])
+        {
+            if (firstCycle[i])
+            {
+                firstCycle[i] = false;
+                if (Animation::currentAnimation == this)
+                {
+                    stop();
+                }
+                else
+                {
+                    start();
+                }
+            }
+        }
+        else
+        {
+            firstCycle[i] = true;
+        }
+    }
 }

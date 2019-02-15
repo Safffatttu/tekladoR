@@ -18,7 +18,11 @@ void AnimationStore::runAnimation(uint number)
 
 void AnimationStore::addAnimation(char *data)
 {
+}
 
+void AnimationStore::addAnimation(Animation newAnimation)
+{
+    animations.push_back(newAnimation);
 }
 
 uint AnimationStore::animationCount()
@@ -29,4 +33,12 @@ uint AnimationStore::animationCount()
 void AnimationStore::stopAnimation()
 {
     Animation::stop();
+}
+
+void AnimationStore::checkTriggers()
+{
+    for (auto &&animation : animations)
+    {
+        animation.checkTriggers();
+    }
 }

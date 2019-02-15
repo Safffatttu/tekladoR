@@ -21,7 +21,9 @@ class AnimationStore
 
     void setup();
     void addAnimation(char *data);
+    void addAnimation(Animation newAnimation);
     void runAnimation(uint number);
     void stopAnimation();
+    void checkTriggers();
     uint animationCount();
 };
