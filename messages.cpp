@@ -39,10 +39,9 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
 
 void subscribeToPairs(){
     for(auto&& pair : io){
-      std::string subscribe = Settings::getInstance()->deviceTopic;
-      char buff[10];
-      itoa(pair.number, buff, 10);
-      subscribe.append(std::string(buff));
+      std::string subscribe = std::string(Settings::getInstance()->deviceTopic);
+      subscribe = subscribe.append("pair/");
+      subscribe = subscribe.append(pair.name);
       mqttClient.subscribe(subscribe.c_str(),2);
       Serial.println(subscribe.c_str());
   }
@@ -83,15 +82,18 @@ void onMqttUnsubscribe(uint16_t packetId) {
 }
 
 void parseIoMessage(char* topic, char* payload){
-  size_t topicLen = sizeof(Settings::getInstance()->deviceTopic.c_str());
-  char* topicEnd = topic + topicLen + 1;
-  int channelNumber = strtoul(topicEnd, nullptr, 10);
+  std::string payloadString = std::string(payload);
+  auto indexOfName = payloadString.find_last_of("/") + 1;
+  std::string pairName = payloadString.substr(indexOfName);
+
   int newState = atoi(payload);
 
-  if (channelNumber >= 0 && channelNumber <= 7){
-    if(newState == 0 || newState == 1){
-      io[channelNumber].changeState(newState);
-    } 
+  for(auto&& pair : io)
+  {
+    if(pair.name == pairName)
+    {
+      pair.changeState(newState);
+    }
   }
 }
 
@@ -155,7 +157,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     updateAnimationCount();
   }
-  else
+  else if (topicString.find("pair/") != std::string::npos)
   {
     parseIoMessage(topic, payload);
   }
@@ -183,19 +185,15 @@ void onMqttPublish(uint16_t packetId) {
   Serial.println(packetId);
 }
 
-void publishMqtt(int number, bool state){
-  std::string publishTo = Settings::getInstance()->deviceTopic;
-  char buff[10];
-  itoa((int) number, buff, 10);
-  publishTo.append(std::string(buff));
-  const char* publishToChar = publishTo.c_str();
+void publishMqtt(std::string name, bool state){
+  std::string publishTo = std::string(Settings::getInstance()->deviceTopic);
+  publishTo = publishTo.append("pair/");
+  publishTo = publishTo.append(name);
 
   char* stateToPublish = new char[2];
   itoa((int) state, stateToPublish, 10);
 
-  mqttClient.publish(publishToChar, 2, true, stateToPublish);
-  Serial.println(publishToChar);
-  Serial.println(stateToPublish);
+  mqttClient.publish(publishTo.c_str(), 2, true, stateToPublish);
 }
 
 void setupNetwork() {

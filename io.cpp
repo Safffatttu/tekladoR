@@ -27,14 +27,14 @@ IOPort hi = IOPort(IODevice::expander1, 7, IOType::input);
 IOPort ho = IOPort(IODevice::local, 3, IOType::output);
 
 IOPair io[8] = {
-    IOPair(&ai, &ao, 0),
-    IOPair(&bi, &bo, 1),
-    IOPair(&ci, &co, 2),
-    IOPair(&Di, &Do, 3),
-    IOPair(&ei, &eo, 4),
-    IOPair(&fi, &fo, 5),
-    IOPair(&gi, &go, 6),
-    IOPair(&hi, &ho, 7)
+    IOPair(&ai, &ao, "0"),
+    IOPair(&bi, &bo, "1"),
+    IOPair(&ci, &co, "2"),
+    IOPair(&Di, &Do, "3"),
+    IOPair(&ei, &eo, "4"),
+    IOPair(&fi, &fo, "5"),
+    IOPair(&gi, &go, "6"),
+    IOPair(&hi, &ho, "7")
 };
 
 void setupIO(){

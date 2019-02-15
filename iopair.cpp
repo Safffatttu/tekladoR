@@ -2,11 +2,11 @@
 #include <ioport.hpp>
 #include <messages.hpp>
 
-IOPair::IOPair(IOPort *i, IOPort *o, int n)
+IOPair::IOPair(IOPort *i, IOPort *o, std::string n)
 {
     inputPort = i;
     outputPort = o;
-    number = n;
+    name = n;
     state = false;
     inputState = false;
     firstCycle = true;
@@ -35,7 +35,7 @@ void IOPair::checkState()
         {
             firstCycle = false;
             state = !state;
-            publishMqtt(number, state);
+            publishMqtt(name, state);
             outputPort->portWrite((int)state);
         }
     }
@@ -53,5 +53,5 @@ void IOPair::switchState()
 
 void IOPair::updateMqttState()
 {
-    publishMqtt(number, state);
+    publishMqtt(name, state);
 }

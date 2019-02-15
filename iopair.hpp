@@ -4,7 +4,7 @@
 class IOPair
 {
   public:
-    IOPair(IOPort *i, IOPort *o, int n);
+    IOPair(IOPort *i, IOPort *o, std::string n);
 
     void setup();
     void changeState(int state);
@@ -12,7 +12,7 @@ class IOPair
     void checkState();
     void updateMqttState();
 
-    int number;
+    std::string name;
 
   private:
     bool state;
