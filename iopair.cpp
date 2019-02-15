@@ -4,51 +4,81 @@
 
 IOPair::IOPair(IOPort *i, IOPort *o, std::string n)
 {
-    inputPort = i;
-    outputPort = o;
+    IOPair({i}, {o}, n);
+}
+
+IOPair::IOPair(std::vector<IOPort> i, std::vector<IOPort> o, std::string n)
+{
+    inputPorts = i;
+    outputPorts = o;
     name = n;
     state = false;
-    inputState = false;
-    firstCycle = true;
+    inputState = std::vector<bool>(false);
+    firstCycle = std::vector<bool>(true);
 }
 
 void IOPair::setup()
 {
-    inputPort->setup();
-    outputPort->setup();
-    outputPort->portWrite((uint8_t) state);
-    inputState = (bool)inputPort->portRead();
+    for (auto &&inputPort : inputPorts)
+    {
+        inputPort.setup();
+    }
+
+    for (auto &&outputPort : outputPorts)
+    {
+        outputPort.setup();
+        outputPort.portWrite((uint8_t)state);
+    }
+
+    for (size_t i = 0; i < inputPorts.size(); i++)
+    {
+        inputState[i] = (bool)inputPorts[i].portRead();
+    }
 }
 
 void IOPair::changeState(int newState)
 {
     state = (bool)newState;
-    outputPort->portWrite(newState);
+
+    for (auto &&outputPort : outputPorts)
+    {
+        outputPort.portWrite((uint8_t)state);
+    }
 }
 
 void IOPair::checkState()
 {
-    bool newState = (bool)inputPort->portRead();
-    if (newState != inputState)
+    for (size_t i = 0; i < inputPorts.size(); i++)
     {
-        if (firstCycle)
+        bool newState = (bool)inputPorts[i].portRead();
+
+        if (newState != inputState[i])
         {
-            firstCycle = false;
-            state = !state;
-            publishMqtt(name, state);
-            outputPort->portWrite((int)state);
+            if (firstCycle[i])
+            {
+                firstCycle[i] = false;
+                state = !state;
+                publishMqtt(name, state);
+                for (auto &&outputPort : outputPorts)
+                {
+                    outputPort.portWrite((uint8_t)state);
+                }
+            }
         }
-    }
-    else
-    {
-        firstCycle = true;
+        else
+        {
+            firstCycle[i] = true;
+        }
     }
 }
 
 void IOPair::switchState()
 {
     state = !state;
-    outputPort->portWrite((int)state);
+    for (auto &&outputPort : outputPorts)
+    {
+        outputPort.portWrite((uint8_t)state);
+    }
 }
 
 void IOPair::updateMqttState()

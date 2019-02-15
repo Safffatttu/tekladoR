@@ -5,6 +5,7 @@ class IOPair
 {
   public:
     IOPair(IOPort *i, IOPort *o, std::string n);
+    IOPair(std::vector<IOPort> i, std::vector<IOPort> o, std::string n);
 
     void setup();
     void changeState(int state);
@@ -16,9 +17,9 @@ class IOPair
 
   private:
     bool state;
-    bool inputState;
-    bool firstCycle;
+    std::vector<bool> inputState;
+    std::vector<bool> firstCycle;
 
-    IOPort *inputPort;
-    IOPort *outputPort;
+    std::vector<IOPort> inputPorts;
+    std::vector<IOPort> outputPorts;
 };

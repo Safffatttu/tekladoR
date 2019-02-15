@@ -27,7 +27,7 @@ IOPort hi = IOPort(IODevice::expander1, 7, IOType::input);
 IOPort ho = IOPort(IODevice::local, 3, IOType::output);
 
 IOPair io[8] = {
-    IOPair(&ai, &ao, "0"),
+    IOPair({ai, bi}, {ao, bo}, "0"),
     IOPair(&bi, &bo, "1"),
     IOPair(&ci, &co, "2"),
     IOPair(&Di, &Do, "3"),
