@@ -2,9 +2,9 @@
 #include <ioport.hpp>
 #include <messages.hpp>
 
-IOPair::IOPair(IOPort *i, IOPort *o, std::string n)
+IOPair::IOPair(IOPort i, IOPort o, std::string n)
 {
-    IOPair({i}, {o}, n);
+    IOPair(std::vector<IOPort>{i}, std::vector<IOPort> {o}, n);
 }
 
 IOPair::IOPair(std::vector<IOPort> i, std::vector<IOPort> o, std::string n)

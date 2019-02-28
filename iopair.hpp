@@ -4,7 +4,7 @@
 class IOPair
 {
   public:
-    IOPair(IOPort *i, IOPort *o, std::string n);
+    IOPair(IOPort i, IOPort o, std::string n);
     IOPair(std::vector<IOPort> i, std::vector<IOPort> o, std::string n);
 
     void setup();
