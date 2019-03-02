@@ -5,6 +5,7 @@
 #include <io.hpp>
 #include <animationStore.hpp>
 #include <settings.hpp>
+#include <update.h>
 
 AsyncMqttClient mqttClient;
 
@@ -160,6 +161,9 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   else if (topicString.find("pair/") != std::string::npos)
   {
     parseIoMessage(topic, payload);
+  }
+  else if (topicString.find("startUpdate") != std::string::npos) {
+    updateAndRebot();
   }
 
   Serial.println("Publish received.");

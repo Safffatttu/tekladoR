@@ -20,4 +20,7 @@ class Settings
     std::string wifi_password;
     IPAddress mqtt_host;
     uint mqtt_port;
+    std::string updateIp;
+    uint16_t updatePort;
+    std::string updateUrl;
 };

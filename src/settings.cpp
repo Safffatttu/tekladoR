@@ -15,6 +15,9 @@ Settings::Settings()
         wifi_password = defaults::wifi_password;
         mqtt_host = defaults::mqtt_host;
         mqtt_port = defaults::mqtt_port;
+        updateIp = defaults::updateIp;
+        updatePort = defaults::updatePort;
+        updateUrl = defaults::updateUrl;
         saveSettings();
     }
     else
@@ -36,10 +39,10 @@ void Settings::saveSettings()
     settingsFile.println(wifi_ssid.c_str());
     settingsFile.println(wifi_password.c_str());
     settingsFile.println(mqtt_host.toString());
-
-    char mqttPortString[8];
-    itoa(mqtt_port, mqttPortString, 10);
-    settingsFile.println(mqttPortString);
+    settingsFile.println(mqtt_port);
+    settingsFile.println(updateIp.c_str());
+    settingsFile.println(updatePort);
+    settingsFile.println(updateUrl.c_str());
 
     settingsFile.seek(0);
     Serial.println(settingsFile.readString());
@@ -71,6 +74,15 @@ void Settings::loadSettings()
 
     auto mqttPortLine = settingsFile.readStringUntil('\n').substring(0, settingsFile.size() - 5);
     mqtt_port = atoi(mqttPortLine.c_str());
+
+    auto updateIpLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    updateIp = updateIpLine.substr(0, updateIpLine.size() - 2);
+
+    auto updatePortLine = settingsFile.readStringUntil('\n').substring(0, settingsFile.size() - 5);
+    mqtt_port = atoi(updatePortLine.c_str());
+
+    auto updateUrlLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    updateUrl = updateUrlLine.substr(0, updateUrlLine.size() - 2);
 
     Serial.println("device");
     Serial.println(deviceTopicLine.c_str());
