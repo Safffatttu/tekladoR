@@ -113,6 +113,87 @@ Settings *Settings::getInstance()
     return instance;
 }
 
-void Settings::updateSettings()
+void Settings::updateSettings(char *topic, char *payload)
 {
+    auto topicString = std::string(topic);
+    bool changed = false;
+
+    if (topicString.find("deviceTopic") != std::string::npos)
+    {
+        auto newDeviceTopic = std::string(payload);
+        if (deviceTopic != newDeviceTopic)
+        {
+            changed = true;
+            deviceTopic = newDeviceTopic;
+        }
+    }
+    else if (topicString.find("wifiSsid") != std::string::npos)
+    {
+        auto newWifi_ssid = std::string(payload);
+        if (wifi_ssid != newWifi_ssid)
+        {
+            changed = true;
+            wifi_ssid = newWifi_ssid;
+        }
+    }
+    else if (topicString.find("wifiPassword") != std::string::npos)
+    {
+        auto newWifi_password = std::string(payload);
+        if (wifi_password != newWifi_password)
+        {
+            changed = true;
+            wifi_password = newWifi_password;
+        }
+    }
+    else if (topicString.find("mqttHost") != std::string::npos)
+    {
+        auto newMqttHost = IPAddress();
+        newMqttHost.fromString(payload);
+        if (mqtt_host != newMqttHost)
+        {
+            changed = true;
+            mqtt_host = newMqttHost;
+        }
+    }
+    else if (topicString.find("mqttPort") != std::string::npos)
+    {
+        uint newMqttPort = atoi(payload);
+        if (mqtt_port != newMqttPort)
+        {
+            changed = true;
+            mqtt_port = newMqttPort;
+        }
+    }
+    else if (topicString.find("updateIp") != std::string::npos)
+    {
+        auto newUpdateIp = std::string(payload);
+        if (updateIp != newUpdateIp)
+        {
+            changed = true;
+            updateIp = newUpdateIp;
+        }
+    }
+    else if (topicString.find("updatePort") != std::string::npos)
+    {
+        auto newUpdatePort = atoi(payload);
+        if (updatePort != newUpdatePort)
+        {
+            changed = true;
+            updatePort = newUpdatePort;
+        }
+    }
+    else if (topicString.find("updateUrl") != std::string::npos)
+    {
+        auto newUpdateUrl = std::string(payload);
+        if (updateUrl != newUpdateUrl)
+        {
+            changed = true;
+            updateUrl = updateUrl;
+        }
+    }
+
+    if (changed)
+    {
+        saveSettings();
+    }
 }

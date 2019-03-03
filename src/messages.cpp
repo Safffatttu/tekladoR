@@ -165,6 +165,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   else if (topicString.find("startUpdate") != std::string::npos) {
     updateAndRebot();
   }
+  else if (topicString.find("/settings") != std::string::npos)
+  {
+    Settings::getInstance()->updateSettings(topic, payload);
+  }
 
   Serial.println("Publish received.");
   Serial.print("  topic: ");

@@ -13,7 +13,7 @@ class Settings
 
   public:
     static Settings *getInstance();
-    void updateSettings();
+    void updateSettings(char *topic, char *payload);
 
     std::string deviceTopic;
     std::string wifi_ssid;
