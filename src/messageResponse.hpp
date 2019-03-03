@@ -1,0 +1,1 @@
+void parseMessage(char *topic, char *payload);
