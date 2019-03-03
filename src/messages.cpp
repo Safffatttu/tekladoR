@@ -2,9 +2,9 @@
 #include "AsyncMqttClient.hpp"
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
-#include <io.hpp>
 #include <settings.hpp>
 #include <messageResponse.hpp>
+#include <messageSubscribe.hpp>
 
 AsyncMqttClient mqttClient;
 
@@ -37,32 +37,8 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
  wifiReconnectTimer.once(2, connectToWifi);
 }
 
-void subscribeToPairs(){
-    for(auto&& pair : io){
-      std::string subscribe = std::string(Settings::getInstance()->deviceTopic);
-      subscribe = subscribe.append("pair/");
-      subscribe = subscribe.append(pair.name);
-      mqttClient.subscribe(subscribe.c_str(),2);
-      Serial.println(subscribe.c_str());
-  }
-}
-
-void subscribeToAnimations(){
-  std::string subscribe = Settings::getInstance()->deviceTopic;
-  subscribe.append("animation/#");
-  mqttClient.subscribe(subscribe.c_str(),2);
-}
-
-void subscribeToStartUpdate(){
-  std::string subscribe = Settings::getInstance()->deviceTopic;
-  subscribe.append("startUpdate");
-  mqttClient.subscribe(subscribe.c_str(), 2);
-}
-
 void onMqttConnect(bool sessionPresent) {
-  subscribeToPairs();
-  subscribeToAnimations();
-  subscribeToStartUpdate();
+  subscribe(mqttClient);
   mqttClient.publish("deviceState", 2, true, "reconnected");
 }
 
