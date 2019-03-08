@@ -90,9 +90,9 @@ void onMqttUnsubscribe(uint16_t packetId) {
 }
 
 void parseIoMessage(char* topic, char* payload){
-  std::string payloadString = std::string(payload);
-  auto indexOfName = payloadString.find_last_of("/") + 1;
-  std::string pairName = payloadString.substr(indexOfName);
+  std::string topicString = std::string(topic);
+  auto indexOfName = topicString.find_last_of("/") + 1;
+  std::string pairName = topicString.substr(indexOfName);
 
   int newState = atoi(payload);
 
