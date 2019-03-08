@@ -28,14 +28,14 @@ IOPort hi = IOPort(IODevice::expander1, 7, IOType::input);
 IOPort ho = IOPort(IODevice::local, 3, IOType::output);
 
 IOPair io[8] = {
-    IOPair({ai, bi}, {ao, bo}, "0"),
-    IOPair(bi, bo, "1"),
-    IOPair(ci, co, "2"),
-    IOPair(Di, Do, "3"),
-    IOPair(ei, eo, "4"),
-    IOPair(fi, fo, "5"),
-    IOPair(gi, go, "6"),
-    IOPair(hi, ho, "7")
+    IOPair(std::vector<IOPort> {ai, bi}, std::vector<IOPort>{ao, bo}, "0"),
+    IOPair(std::vector<IOPort> {bi}, std::vector<IOPort>{bo}, "1"),
+    IOPair(std::vector<IOPort> {ci}, std::vector<IOPort>{co}, "2"),
+    IOPair(std::vector<IOPort> {Di}, std::vector<IOPort>{Do}, "3"),
+    IOPair(std::vector<IOPort> {ei}, std::vector<IOPort>{eo}, "4"),
+    IOPair(std::vector<IOPort> {fi}, std::vector<IOPort>{fo}, "5"),
+    IOPair(std::vector<IOPort> {gi}, std::vector<IOPort>{go}, "6"),
+    IOPair(std::vector<IOPort> {hi}, std::vector<IOPort>{ho}, "7")
 };
 
 void setupAnimations()
