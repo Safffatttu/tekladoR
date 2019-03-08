@@ -3,6 +3,10 @@
 #include <WiFiClient.h>
 #include <settings.hpp>
 
+#ifndef GIT_HASH
+#define GIT_HASH "1"
+#endif
+
 void updateAndRebot()
 {
     ESPhttpUpdate.rebootOnUpdate(true);
