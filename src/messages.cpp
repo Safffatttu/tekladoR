@@ -64,7 +64,8 @@ void onMqttConnect(bool sessionPresent) {
   subscribeToPairs();
   subscribeToAnimations();
   subscribeToStartUpdate();
-  mqttClient.publish("deviceState", 2, true, "reconnected");
+  auto devieTopic = Settings::getInstance()->deviceTopic;
+  mqttClient.publish(devieTopic.append("deviceState").c_str(), 2, true, "reconnected");
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {

@@ -5,6 +5,17 @@ Settings *Settings::instance = nullptr;
 
 Settings::Settings()
 {
+#ifdef DISABLE_FS
+    deviceTopic = defaults::deviceTopic;
+    wifi_ssid = defaults::wifi_ssid;
+    wifi_password = defaults::wifi_password;
+    mqtt_host = defaults::mqtt_host;
+    mqtt_port = defaults::mqtt_port;
+    updateIp = defaults::updateIp;
+    updatePort = defaults::updatePort;
+    updateUrl = defaults::updateUrl;
+#else
+
     SPIFFS.begin();
 
     if (!SPIFFS.exists("/settings"))
@@ -27,6 +38,7 @@ Settings::Settings()
     }
 
     SPIFFS.end();
+#endif
 }
 
 void Settings::saveSettings()
@@ -79,7 +91,7 @@ void Settings::loadSettings()
     updateIp = updateIpLine.substr(0, updateIpLine.size() - 2);
 
     auto updatePortLine = settingsFile.readStringUntil('\n').substring(0, settingsFile.size() - 5);
-    mqtt_port = atoi(updatePortLine.c_str());
+    updatePort = atoi(updatePortLine.c_str());
 
     auto updateUrlLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     updateUrl = updateUrlLine.substr(0, updateUrlLine.size() - 2);
