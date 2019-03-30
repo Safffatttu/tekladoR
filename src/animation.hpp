@@ -12,6 +12,7 @@ private:
 
   std::vector<IOPort> outputs;
   std::vector<std::vector<std::vector<bool>>> steps;
+  std::vector<std::string> outputNames;
   uint animationState;
   bool loop;
   float stepTime;
@@ -24,6 +25,7 @@ private:
 public:
   void start();
   void checkTriggers();
+  void updateMqttState();
   static void stop();
 
   Animation(std::vector<IOPort> triggers, std::vector<IOPort> outputs, std::vector<std::vector<std::vector<bool>>> steps, bool loop, float stepTime)

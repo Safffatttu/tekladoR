@@ -1,6 +1,8 @@
 #include <Ticker.h>
 #include <iopair.hpp>
 #include <animation.hpp>
+#include <messages.hpp>
+#include <settings.hpp>
 
 void Animation::nextStep()
 {
@@ -12,14 +14,20 @@ void Animation::nextStep()
         {
             currentAnimation->stepNumber = 0;
         }
-        else if (currentAnimation->animationState < currentAnimation->steps.size())
-        {
-            currentAnimation->animationState++;
-        }
         else
         {
-            currentAnimation->animationState = 0;
             Animation::animationTicker.detach();
+            currentAnimation->updateMqttState();
+
+            if (currentAnimation->animationState < currentAnimation->steps.size())
+            {
+                currentAnimation->animationState++;
+            }
+            else 
+            {
+                currentAnimation->animationState = 0;
+            }
+            
             return;
         }
     }
@@ -45,6 +53,18 @@ void Animation::start()
 void Animation::stop()
 {
     animationTicker.detach();
+}
+
+void Animation::updateMqttState()
+{
+    auto deviceTopic = Settings::getInstance()->deviceTopic;
+    deviceTopic = deviceTopic.append("pair/");
+    for(uint i = 0; i < currentAnimation->outputNames.size(); i++)
+    {
+        auto portName = deviceTopic.append(currentAnimation->outputNames[i]);
+        bool state = currentAnimation->steps[animationState].back()[i];
+        publishMqtt(portName, state);
+    }
 }
 
 void Animation::checkTriggers()
