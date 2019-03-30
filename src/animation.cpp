@@ -6,14 +6,19 @@ void Animation::nextStep()
 {
     currentAnimation->stepNumber++;
 
-    if (currentAnimation->stepNumber < currentAnimation->steps.size())
+    if (currentAnimation->stepNumber < currentAnimation->steps[currentAnimation->animationState].size())
     {
         if (currentAnimation->loop)
         {
             currentAnimation->stepNumber = 0;
         }
+        else if (currentAnimation->animationState < currentAnimation->steps.size())
+        {
+            currentAnimation->animationState++;
+        }
         else
         {
+            currentAnimation->animationState = 0;
             Animation::animationTicker.detach();
             return;
         }
@@ -22,7 +27,7 @@ void Animation::nextStep()
     for (size_t i = 0; i < currentAnimation->outputs.size(); i++)
     {
         IOPort port = currentAnimation->outputs[i];
-        bool newValue = currentAnimation->steps[currentAnimation->stepNumber][i];
+        bool newValue = currentAnimation->steps[currentAnimation->animationState][currentAnimation->stepNumber][i];
         port.portWrite(newValue);
     }
 }

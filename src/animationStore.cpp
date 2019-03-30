@@ -16,13 +16,13 @@ void AnimationStore::runAnimation(uint number)
     animations[number].start();
 }
 
-void AnimationStore::addAnimation(char *data)
+void AnimationStore::addAnimations(std::vector<Animation> newAnimations)
 {
-}
-
-void AnimationStore::addAnimation(Animation newAnimation)
-{
-    animations.push_back(newAnimation);
+    for(auto&& newAnimation : newAnimations)
+    {
+        AnimationStore::getInstance()->animations.push_back(newAnimation);
+    }
+    
 }
 
 uint AnimationStore::animationCount()

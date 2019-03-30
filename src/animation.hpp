@@ -11,7 +11,8 @@ private:
   std::vector<bool> firstCycle;
 
   std::vector<IOPort> outputs;
-  std::vector<std::vector<bool>> steps;
+  std::vector<std::vector<std::vector<bool>>> steps;
+  uint animationState;
   bool loop;
   float stepTime;
   uint stepNumber;
@@ -25,7 +26,7 @@ public:
   void checkTriggers();
   static void stop();
 
-  Animation(std::vector<IOPort> triggers, std::vector<IOPort> outputs, std::vector<std::vector<bool>> steps, bool loop, float stepTime)
+  Animation(std::vector<IOPort> triggers, std::vector<IOPort> outputs, std::vector<std::vector<std::vector<bool>>> steps, bool loop, float stepTime)
       : triggers(triggers), outputs(outputs), steps(steps), loop(loop), stepTime(stepTime)
   {
     for (auto &&trigger : triggers)
