@@ -2,6 +2,7 @@
 #include <Arduino.h>
 
 Adafruit_MCP23017 mcp1;
+Adafruit_MCP23017 mcp2;
 
 int IOPort::portRead()
 {
@@ -13,6 +14,10 @@ int IOPort::portRead()
     else if (device == IODevice::expander1)
     {
         newState = mcp1.digitalRead(pin);
+    }
+    else
+    {
+        newState = mcp2.digitalRead(pin);
     }
 
     return newState;
@@ -28,6 +33,10 @@ void IOPort::portWrite(uint8_t state)
     {
         mcp1.digitalWrite(pin, state);
     }
+    else
+    {
+        mcp2.digitalWrite(pin, state);
+    }
 }
 
 void IOPort::setup()
@@ -42,4 +51,9 @@ void IOPort::setup()
     {
         mcp1.pinMode(pin, t);
     }
+    else
+    {
+        mcp2.pinMode(pin, t);
+    }
+    
 }

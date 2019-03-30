@@ -46,6 +46,7 @@ void setupAnimations()
 
 void setupIO(){
     mcp1.begin();
+    mcp2.begin();
     for(auto&& pair : io){
         pair.setup();
     }

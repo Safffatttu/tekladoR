@@ -3,6 +3,7 @@
 #include <Adafruit_MCP23017.h>
 
 extern Adafruit_MCP23017 mcp1;
+extern Adafruit_MCP23017 mcp2;
 
 enum class IODevice : uint8_t
 {
