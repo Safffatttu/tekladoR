@@ -120,7 +120,7 @@ void parseAnimationMessage(std::string topic, char* payload)
 
   if (foundNewAnimation != std::string::npos)
   {
-    AnimationStore::getInstance()->addAnimation(payload);
+    // AnimationStore::getInstance()->addAnimation(payload);
   }
   else
   {

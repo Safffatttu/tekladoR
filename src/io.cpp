@@ -40,8 +40,8 @@ IOPair io[8] = {
 
 void setupAnimations()
 {
-    Animation animationOne = Animation({ai},{ao},{{true}, {false}}, false, 0.5);
-    AnimationStore::getInstance()->addAnimation(animationOne);
+    // Animation animationOne = Animation({ai},{ao},{{true}, {false}}, false, 0.5);
+    // AnimationStore::getInstance()->addAnimation(animationOne);
 }
 
 void setupIO(){
