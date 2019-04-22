@@ -28,8 +28,8 @@ public:
   void updateMqttState();
   static void stop();
 
-  Animation(std::vector<IOPort> triggers, std::vector<IOPort> outputs, std::vector<std::vector<std::vector<bool>>> steps, bool loop, float stepTime)
-      : triggers(triggers), outputs(outputs), steps(steps), loop(loop), stepTime(stepTime)
+  Animation(std::vector<IOPort> triggers, std::vector<IOPort> outputs, std::vector<std::vector<std::vector<bool>>> steps, bool loop, std::vector<std::string> outputNames, float stepTime)
+      : triggers(triggers), outputs(outputs), steps(steps), outputNames(outputNames), loop(loop), stepTime(stepTime)
   {
     for (auto &&trigger : triggers)
     {
