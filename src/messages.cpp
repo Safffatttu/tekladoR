@@ -116,27 +116,18 @@ void updateMqttState()
 
 void parseAnimationMessage(std::string topic, char* payload)
 {
-  std::size_t foundNewAnimation = topic.find("new");
-
-  if (foundNewAnimation != std::string::npos)
+  int animationControl = atoi(payload);
+  auto positionOfNumber = topic.find_last_of("/");
+  auto animationNumberString = topic.substr(positionOfNumber + 1);
+  int animationNumber = strtoul(animationNumberString.c_str(), nullptr, 10);
+  
+  if (animationControl == 0)
   {
-    // AnimationStore::getInstance()->addAnimation(payload);
+    AnimationStore::getInstance()->stopAnimation();
   }
-  else
+  else if (animationControl == 1)
   {
-    int animationControll = atoi(payload);
-    auto positionOfNumber = topic.find_last_of("/");
-    auto animationNumberString = topic.substr(positionOfNumber + 1);
-    int animationNumber = strtoul(animationNumberString.c_str(), nullptr, 10);
-    
-    if (animationControll == 0)
-    {
-      AnimationStore::getInstance()->stopAnimation();
-    }
-    else if (animationControll == 1)
-    {
-      AnimationStore::getInstance()->runAnimation(animationNumber);
-    }
+    AnimationStore::getInstance()->runAnimation(animationNumber);
   }
 }
 
@@ -222,6 +213,5 @@ void setupNetwork() {
   mqttClient.setServer(Settings::getInstance()->mqtt_host, Settings::getInstance()->mqtt_port);
   auto willTopic = Settings::getInstance()->deviceTopic;
   mqttClient.setWill(willTopic.append("deviceState").c_str(), 2, true, "disconnected");
-  
   connectToWifi();
 }
