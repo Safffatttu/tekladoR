@@ -60,9 +60,16 @@ void subscribeToSettingsUpdates(){
   mqttClient.subscribe(subscribe.c_str(), 2);
 }
 
+void subscribeToRemoteUpdate(){
+  std::string subscribe = Settings::getInstance()->deviceTopic;
+  subscribe.append("startUpdate");
+  mqttClient.subscribe(subscribe.c_str(), 2);
+}
+
 void onMqttConnect(bool sessionPresent) {
   subscribeToPairs();
   subscribeToAnimations();
+  subscribeToSettingsUpdates();
   subscribeToSettingsUpdates();
   mqttClient.publish("deviceState", 2, true, "reconnected");
 }
