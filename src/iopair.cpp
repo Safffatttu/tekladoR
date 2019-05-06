@@ -54,7 +54,7 @@ void IOPair::checkState()
             {
                 firstCycle[i] = false;
                 state = !state;
-                publishMqtt(name, state);
+                publishPairMqtt(name, state);
                 for (auto &&outputPort : outputPorts)
                 {
                     outputPort.portWrite((uint8_t)state);
@@ -79,5 +79,5 @@ void IOPair::switchState()
 
 void IOPair::updateMqttState()
 {
-    publishMqtt(name, state);
+    publishPairMqtt(name, state);
 }

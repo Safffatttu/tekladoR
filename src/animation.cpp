@@ -63,7 +63,7 @@ void Animation::updateMqttState()
     {
         auto portName = deviceTopic.append(currentAnimation->outputNames[i]);
         bool state = currentAnimation->steps[animationState].back()[i];
-        publishMqtt(portName, state);
+        publishPairMqtt(portName, state);
     }
 }
 

@@ -2,10 +2,9 @@
 #include "AsyncMqttClient.hpp"
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
-#include <io.hpp>
-#include <animationStore.hpp>
 #include <settings.hpp>
-#include <update.h>
+#include <messageResponse.hpp>
+#include <messageSubscribe.hpp>
 
 AsyncMqttClient mqttClient;
 
@@ -38,33 +37,9 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
  wifiReconnectTimer.once(2, connectToWifi);
 }
 
-void subscribeToPairs(){
-    for(auto&& pair : io){
-      std::string subscribe = std::string(Settings::getInstance()->deviceTopic);
-      subscribe = subscribe.append("pair/");
-      subscribe = subscribe.append(pair.name);
-      mqttClient.subscribe(subscribe.c_str(),2);
-      Serial.println(subscribe.c_str());
-  }
-}
-
-void subscribeToAnimations(){
-  std::string subscribe = Settings::getInstance()->deviceTopic;
-  subscribe.append("animation/#");
-  mqttClient.subscribe(subscribe.c_str(),2);
-}
-
-void subscribeToStartUpdate(){
-  std::string subscribe = Settings::getInstance()->deviceTopic;
-  subscribe.append("startUpdate");
-  mqttClient.subscribe(subscribe.c_str(), 2);
-}
-
 void onMqttConnect(bool sessionPresent) {
-  subscribeToPairs();
-  subscribeToAnimations();
-  subscribeToStartUpdate();
   auto devieTopic = Settings::getInstance()->deviceTopic;
+  subscribe(mqttClient);
   mqttClient.publish(devieTopic.append("deviceState").c_str(), 2, true, "reconnected");
 }
 
@@ -90,80 +65,9 @@ void onMqttUnsubscribe(uint16_t packetId) {
   Serial.println(packetId);
 }
 
-void parseIoMessage(char* topic, char* payload){
-  std::string topicString = std::string(topic);
-  auto indexOfName = topicString.find_last_of("/") + 1;
-  std::string pairName = topicString.substr(indexOfName);
-
-  int newState = atoi(payload);
-
-  for(auto&& pair : io)
-  {
-    if(pair.name == pairName)
-    {
-      pair.changeState(newState);
-    }
-  }
-}
-
-void updateMqttState()
-{
-  for(auto&& pair : io)
-  {
-    pair.updateMqttState();
-  }
-}
-
-void parseAnimationMessage(std::string topic, char* payload)
-{
-  int animationControl = atoi(payload);
-  auto positionOfNumber = topic.find_last_of("/");
-  auto animationNumberString = topic.substr(positionOfNumber + 1);
-  int animationNumber = strtoul(animationNumberString.c_str(), nullptr, 10);
-  
-  if (animationControl == 0)
-  {
-    AnimationStore::getInstance()->stopAnimation();
-  }
-  else if (animationControl == 1)
-  {
-    AnimationStore::getInstance()->runAnimation(animationNumber);
-  }
-}
-
-void updateAnimationCount()
-{
-  uint count = AnimationStore::getInstance()->animationCount();
-  char countChar[5];
-  itoa(count, countChar, 10);
-  std::string topic = (Settings::getInstance()->deviceTopic).append("animation/count");
-  mqttClient.publish(topic.c_str(), 2, true, countChar);
-}
-
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
 {
-  std::string topicString = std::string(topic);
-  std::size_t foundAnimation = topicString.find("animation");
-
-  if (foundAnimation != std::string::npos)
-  {
-    parseAnimationMessage(topicString, payload);
-  }
-  else if (topicString.find("checkState") != std::string::npos)
-  {
-    updateMqttState();
-  }
-  else if (topicString.find("animation/count") != std::string::npos)
-  {
-    updateAnimationCount();
-  }
-  else if (topicString.find("pair/") != std::string::npos)
-  {
-    parseIoMessage(topic, payload);
-  }
-  else if (topicString.find("startUpdate") != std::string::npos) {
-    updateAndRebot();
-  }
+  parseMessage(topic, payload);
 
   Serial.println("Publish received.");
   Serial.print("  topic: ");
@@ -188,7 +92,7 @@ void onMqttPublish(uint16_t packetId) {
   Serial.println(packetId);
 }
 
-void publishMqtt(std::string name, bool state){
+void publishPairMqtt(std::string name, bool state){
   std::string publishTo = std::string(Settings::getInstance()->deviceTopic);
   publishTo = publishTo.append("pair/");
   publishTo = publishTo.append(name);
@@ -197,6 +101,10 @@ void publishMqtt(std::string name, bool state){
   itoa((int) state, stateToPublish, 10);
 
   mqttClient.publish(publishTo.c_str(), 2, true, stateToPublish);
+}
+
+void publishMqtt(const char *topic, uint8_t qos, bool retain, const char *payload){
+  mqttClient.publish(topic, qos, retain, payload);
 }
 
 void setupNetwork() {
