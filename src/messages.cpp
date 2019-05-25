@@ -38,9 +38,10 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected& event) {
 }
 
 void onMqttConnect(bool sessionPresent) {
+  Serial.println("Connected to MQTT.");
   auto devieTopic = Settings::getInstance()->deviceTopic;
-  subscribe(mqttClient);
   mqttClient.publish(devieTopic.append("deviceState").c_str(), 2, true, "reconnected");
+  subscribe(&mqttClient);
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
