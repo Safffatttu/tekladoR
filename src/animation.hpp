@@ -39,5 +39,8 @@ public:
     {
       output.setup();
     }
+    Animation::currentAnimation = nullptr;
+    stepNumber = 0;
+    animationState = 0;
   }
 };
