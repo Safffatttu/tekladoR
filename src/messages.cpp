@@ -98,7 +98,7 @@ void publishPairMqtt(std::string name, bool state){
   publishTo = publishTo.append("pair/");
   publishTo = publishTo.append(name);
 
-  char* stateToPublish = new char[2];
+  char stateToPublish[2];
   itoa((int) state, stateToPublish, 10);
 
   mqttClient.publish(publishTo.c_str(), 2, true, stateToPublish);
