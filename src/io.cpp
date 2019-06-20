@@ -1,7 +1,7 @@
-#include <iopair.hpp>
-#include <io.hpp>
-#include <animationStore.hpp>
 #include <Arduino.h>
+#include <animationStore.hpp>
+#include <io.hpp>
+#include <iopair.hpp>
 
 IOPort ai = IOPort(IODevice::expander1, 0, IOType::input);
 IOPort ao = IOPort(IODevice::local, 16, IOType::output);
@@ -44,16 +44,16 @@ void setupAnimations()
     // AnimationStore::getInstance()->addAnimation(animationOne);
 }
 
-void setupIO(){
-    mcp1.begin();
-    mcp2.begin();
-    for(auto&& pair : io){
-        pair.setup();
-    }
+void setupIO() {
+  mcp1.begin();
+  mcp2.begin(1);
+  for (auto &&pair : io) {
+    pair.setup();
+  }
 }
 
-void checkInputs(){
-    for(auto&& pair : io){
-        pair.checkState();
-    }
+void checkInputs() {
+  for (auto &&pair : io) {
+    pair.checkState();
+  }
 }
