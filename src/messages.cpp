@@ -68,7 +68,9 @@ void onMqttUnsubscribe(uint16_t packetId) {
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
 {
-  parseMessage(topic, payload);
+  auto topicString = new std::string(topic);
+  auto payloadString = new std::string(std::string(payload).substr(0, len));
+  parseMessage(topicString, payloadString);
 
   Serial.println("Publish received.");
   Serial.print("  topic: ");
@@ -85,6 +87,9 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   Serial.println(index);
   Serial.print("  total: ");
   Serial.println(total);
+
+  delete topicString;
+  delete payloadString;
 }
 
 void onMqttPublish(uint16_t packetId) {

@@ -5,13 +5,13 @@
 #include <settings.hpp>
 #include <messages.hpp>
 
-void parseIoMessage(char *topic, char *payload)
+void parseIoMessage(std::string *topic, std::string *payload)
 {
-    std::string payloadString = std::string(payload);
-    auto indexOfName = payloadString.find_last_of("/") + 1;
-    std::string pairName = payloadString.substr(indexOfName);
+    if (payload->size() == 0) return;
+    auto indexOfName = topic->find_last_of("/") + 1;
+    std::string pairName = topic->substr(indexOfName);
 
-    int newState = atoi(payload);
+    int newState = atoi(payload->c_str());
 
     for (auto &&pair : io)
     {
@@ -30,12 +30,11 @@ void updateMqttState()
     }
 }
 
-void parseAnimationMessage(std::string topic, char *payload)
+void parseAnimationMessage(std::string *topic, const char *payload)
 {
-
     int animationControll = atoi(payload);
-    auto positionOfNumber = topic.find_last_of("/");
-    auto animationNumberString = topic.substr(positionOfNumber + 1);
+    auto positionOfNumber = topic->find_last_of("/");
+    auto animationNumberString = topic->substr(positionOfNumber + 1);
     int animationNumber = strtoul(animationNumberString.c_str(), nullptr, 10);
 
     if (animationControll == 0)
@@ -57,28 +56,25 @@ void updateAnimationCount()
     publishMqtt(topic.c_str(), 2, true, countChar);
 }
 
-void parseMessage(char *topic, char *payload)
+void parseMessage(std::string *topic, std::string *payload)
 {
-    std::string topicString = std::string(topic);
-    std::size_t foundAnimation = topicString.find("animation");
-
-    if (foundAnimation != std::string::npos)
+    if (topic->find("animation") != std::string::npos)
     {
-        parseAnimationMessage(topicString, payload);
+        parseAnimationMessage(topic, payload->c_str());
     }
-    else if (topicString.find("checkState") != std::string::npos)
+    else if (topic->find("checkState") != std::string::npos)
     {
         updateMqttState();
     }
-    else if (topicString.find("animation/count") != std::string::npos)
+    else if (topic->find("animation/count") != std::string::npos)
     {
         updateAnimationCount();
     }
-    else if (topicString.find("pair/") != std::string::npos)
+    else if (topic->find("pair/") != std::string::npos)
     {
         parseIoMessage(topic, payload);
     }
-    else if (topicString.find("startUpdate") != std::string::npos)
+    else if (topic->find("startUpdate") != std::string::npos)
     {
         updateAndRebot();
     }
