@@ -1,6 +1,7 @@
 #include <iopair.hpp>
 
-extern IOPair io[8];
+extern IOPair io[6];
+// extern IOPair io[1];
 
 void setupAnimations();
 void setupIO();
