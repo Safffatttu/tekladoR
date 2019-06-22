@@ -1,10 +1,12 @@
 #include <animation.hpp>
 #include <vector>
+#include <set>
 
 class AnimationStore
 {
   private:
     std::vector<Animation> animations;
+    std::set<std::set<Animation*>> animationGroups;
     static AnimationStore *instance;
     AnimationStore();
 
@@ -24,5 +26,7 @@ class AnimationStore
     void runAnimation(uint number);
     void stopAnimation();
     void checkTriggers();
+    void updateAnimationGroup(Animation* triggeringAnimation);
+    void addAnimationGroup(std::set<Animation*> animationGroup);
     uint animationCount();
 };
