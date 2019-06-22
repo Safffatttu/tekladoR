@@ -32,7 +32,10 @@ uint AnimationStore::animationCount()
 
 void AnimationStore::stopAnimation()
 {
-    Animation::stop();
+    for (auto &&ani : animations)
+    {
+        ani.stop();
+    }
 }
 
 void AnimationStore::checkTriggers()
