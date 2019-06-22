@@ -27,6 +27,8 @@ public:
   void checkTriggers();
   void updateMqttState();
   void stop();
+  void setState(std::vector<bool> newState);
+  std::vector<bool> getState();
 
   Animation(std::vector<IOPort> triggers, std::vector<IOPort> outputs, std::vector<std::vector<std::vector<bool>>> steps, bool loop, std::vector<std::string> outputNames, float stepTime)
       : triggers(triggers), outputs(outputs), steps(steps), outputNames(outputNames), loop(loop), stepTime(stepTime)

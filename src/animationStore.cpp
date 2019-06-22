@@ -1,4 +1,5 @@
 #include <animationStore.hpp>
+#include <set>
 
 AnimationStore *AnimationStore::instance = nullptr;
 
@@ -44,4 +45,26 @@ void AnimationStore::checkTriggers()
     {
         animation.checkTriggers();
     }
+}
+
+void AnimationStore::updateAnimationGroup(Animation* trigeringAnimation)
+{
+    for (auto &&group : animationGroups)
+    {
+        for (auto &&animation : group)
+        {
+            if (animation == trigeringAnimation)
+            {
+                for (auto &&animation : group){
+                    if (animation == trigeringAnimation) continue;
+                    animation->setState(trigeringAnimation->getState());
+                }
+            }
+        }
+    }
+}
+
+void AnimationStore::addAnimationGroup(std::set<Animation*> animationGroup)
+{
+    animationGroups.insert(animationGroup);
 }

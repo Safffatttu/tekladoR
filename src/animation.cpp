@@ -1,5 +1,6 @@
 #include <Ticker.h>
 #include <animation.hpp>
+#include <animationStore.hpp>
 #include <iopair.hpp>
 #include <messages.hpp>
 #include <settings.hpp>
@@ -19,6 +20,7 @@ void Animation::nextStep(Animation* toRun) {
       toRun->animationTicker.detach();
       toRun->isRunning = false;
       toRun->updateMqttState();
+      AnimationStore::getInstance()->updateAnimationGroup(toRun);
 
       toRun->animationState++;
       // Check if last animation state -> go to begining
@@ -96,4 +98,17 @@ void Animation::checkTriggers() {
       firstCycle[i] = true;
     }
   }
+}
+
+void Animation::setState(std::vector<bool> newState) {
+  for (size_t i = 0; i < steps.size(); i++) {
+    if (steps[i].back() == newState){
+      animationState = i;
+      return;
+    }
+  }
+}
+
+std::vector<bool> Animation::getState() {
+  return steps[animationState].back();
 }
