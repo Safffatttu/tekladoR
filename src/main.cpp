@@ -8,6 +8,7 @@ void setup() {
   setupNetwork();
   setupIO();
   setupAnimations();
+  testOutputs();
 }
 
 void loop() {

@@ -9,8 +9,7 @@ IOPort ao = IOPort(IODevice::local, 16, IOType::output);
 IOPort bi = IOPort(IODevice::expander1, 1, IOType::input);
 IOPort bo = IOPort(IODevice::local, 0, IOType::output);
 
-IOPort ci = IOPort(IODevice::expander1, 2, IOType::input);
-IOPort co = IOPort(IODevice::local, 2, IOType::output);
+std::vector<IOPort> portsToTest = {};
 
 IOPort Di = IOPort(IODevice::expander1, 3, IOType::input);
 IOPort Do = IOPort(IODevice::local, 14, IOType::output);
@@ -38,10 +37,13 @@ IOPair io[8] = {
     IOPair(std::vector<IOPort> {hi}, std::vector<IOPort>{ho}, "7")
 };
 
-void setupAnimations()
-{
-    // Animation animationOne = Animation({ai},{ao},{{true}, {false}}, false, 0.5);
-    // AnimationStore::getInstance()->addAnimation(animationOne);
+void testOutputs() {
+  for (size_t i = 0; i < 9; i++) {
+       for (auto &&port : portsToTest) {
+              port.portWrite(i % 2);
+              delay(200);
+       }
+  } 
 }
 
 void setupIO() {
