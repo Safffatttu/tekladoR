@@ -23,7 +23,7 @@ void IOPair::setup()
     for (auto &&outputPort : outputPorts)
     {
         outputPort.setup();
-        outputPort.portWrite((uint8_t)state);
+        outputPort.portWrite(state);
     }
 
     for (size_t i = 0; i < inputPorts.size(); i++)
@@ -32,13 +32,11 @@ void IOPair::setup()
     }
 }
 
-void IOPair::changeState(int newState)
+void IOPair::changeState(bool newState)
 {
-    state = (bool)newState;
-
     for (auto &&outputPort : outputPorts)
     {
-        outputPort.portWrite((uint8_t)state);
+        outputPort.portWrite(state);
     }
 }
 
@@ -57,7 +55,7 @@ void IOPair::checkState()
                 publishPairMqtt(name, state);
                 for (auto &&outputPort : outputPorts)
                 {
-                    outputPort.portWrite((uint8_t)state);
+                    outputPort.portWrite(state);
                 }
             }
         }
@@ -73,7 +71,7 @@ void IOPair::switchState()
     state = !state;
     for (auto &&outputPort : outputPorts)
     {
-        outputPort.portWrite((uint8_t)state);
+        outputPort.portWrite(state);
     }
 }
 

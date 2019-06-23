@@ -7,7 +7,7 @@ class IOPair
     IOPair(std::vector<IOPort> i, std::vector<IOPort> o, std::string n);
 
     void setup();
-    void changeState(int state);
+    void changeState(bool state);
     void switchState();
     void checkState();
     void updateMqttState();

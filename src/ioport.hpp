@@ -25,7 +25,7 @@ class IOPort
         : device(device), pin(pin), type(type) {}
 
     int portRead();
-    void portWrite(uint8_t state);
+    void portWrite(bool state);
     void setup();
 
   private:

@@ -23,19 +23,19 @@ int IOPort::portRead()
     return newState;
 }
 
-void IOPort::portWrite(uint8_t state)
+void IOPort::portWrite(bool state)
 {
     if (device == IODevice::local)
     {
-        digitalWrite(pin, state);
+        digitalWrite(pin, !state);
     }
     else if (device == IODevice::expander1)
     {
-        mcp1.digitalWrite(pin, state);
+        mcp1.digitalWrite(pin, !state);
     }
     else
     {
-        mcp2.digitalWrite(pin, state);
+        mcp2.digitalWrite(pin, !state);
     }
 }
 
