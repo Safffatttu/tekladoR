@@ -7,12 +7,12 @@
 
 namespace defaults
 {
-const char *wifi_ssid = "***REMOVED***";
+const char *wifi_ssid = "3MAX(01/2,4G)";
 const char *wifi_password = "***REMOVED***";
-IPAddress mqtt_host = IPAddress(192, 168, 0, 213);
-int mqtt_port = 1500;
+IPAddress mqtt_host = IPAddress(192, 168, 1, 8);
+int mqtt_port = 1883;
 std::string deviceTopic = "hall/";
-std::string updateIp = "192.168.0.213";
+std::string updateIp = "192.168.1.8";
 uint16_t updatePort = 8090;
 std::string updateUrl = "/firmware.bin";
 std::string version = GIT_HASH;
