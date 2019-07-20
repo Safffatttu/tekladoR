@@ -120,6 +120,8 @@ void setupAnimations() {
 
     Animation animacjaWentylator = Animation({wentylatorLazienkaInput},{wentylatorLazienka}, {{{false, true, false}}},false, {"wentylatorLazienka"}, 0.1);
     AnimationStore::getInstance()->addAnimations({animacjaKlatka, animacjaPs3, animacjaLazienka, animacjaWentylator});
+
+    AnimationStore::getInstance()->addAnimationGroup(std::set<Animation*>{&animacjaKlatka, &animacjaPs3, &animacjaLazienka});
   //    Animation anim = Animation({input},{output},
   //  {
   //    {{true}, {false}, {true}, {false},{true}, {false}, {true},

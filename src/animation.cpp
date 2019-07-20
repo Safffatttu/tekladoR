@@ -1,85 +1,82 @@
 #include <Ticker.h>
 #include <animation.hpp>
+#include <animationStore.hpp>
 #include <iopair.hpp>
 #include <messages.hpp>
 #include <settings.hpp>
 
-void Animation::nextStep() {
-  auto curAni = currentAnimation;
-  if (curAni == nullptr)
-    return;
-  curAni->stepNumber++;
+void Animation::nextStep(Animation* toRun) {
+  if (toRun == nullptr) return;
+  toRun->stepNumber++;
 
   // Check if last animation step -> End animation / loop
-  if (curAni->stepNumber == curAni->steps[curAni->animationState].size()) {
+  if (toRun->stepNumber == toRun->steps[toRun->animationState].size()) {
 
-    if (curAni->loop) {
-      curAni->stepNumber = 0;
+    if (toRun->loop) {
+      toRun->stepNumber = 0;
       Serial.println("End loop");
     } else { // End animation
       Serial.println("End animation");
-      Animation::animationTicker.detach();
-      curAni->updateMqttState();
+      toRun->animationTicker.detach();
+      toRun->isRunning = false;
+      toRun->updateMqttState();
+      AnimationStore::getInstance()->updateAnimationGroup(toRun);
 
-      curAni->animationState++;
+      toRun->animationState++;
       // Check if last animation state -> go to begining
-      if (curAni->animationState == curAni->steps.size()) {
-        curAni->animationState = 0;
+      if (toRun->animationState == toRun->steps.size()) {
+        toRun->animationState = 0;
       }
-      Animation::currentAnimation = nullptr;
       return;
     }
   }
 
-  Serial.println(curAni->animationState);
-  Serial.println(curAni->stepNumber);
+  Serial.println(toRun->animationState);
+  Serial.println(toRun->stepNumber);
 
   // Apply changes if not end
-  for (size_t i = 0; i < curAni->outputs.size(); i++) {
+  for (size_t i = 0; i < toRun->outputs.size(); i++) {
     Serial.println("ANIMATION");
-    if (curAni->steps.size() <= curAni->animationState) {
-      Serial.println(curAni->animationState);
+    if (toRun->steps.size() <= toRun->animationState) {
+      Serial.println(toRun->animationState);
       Serial.println("ERROR1");
       return;
     }
-    if (curAni->steps[curAni->animationState].size() <= curAni->stepNumber) {
-      Serial.println(curAni->stepNumber);
+    if (toRun->steps[toRun->animationState].size() <= toRun->stepNumber) {
       Serial.println("ERROR2");
+      Serial.println(toRun->stepNumber);
       return;
     }
-    if (curAni->steps[curAni->animationState][curAni->stepNumber].size() <= i) {
+    if (toRun->steps[toRun->animationState][toRun->stepNumber].size() <= i) {
       Serial.println(i);
       Serial.println("ERROR3");
       return;
     }
     bool newValue =
-        curAni->steps[curAni->animationState][curAni->stepNumber][i];
-    curAni->outputs[i].portWrite(newValue);
+        toRun->steps[toRun->animationState][toRun->stepNumber][i];
+    toRun->outputs[i].portWrite(newValue);
   }
 }
 
-Ticker Animation::animationTicker = Ticker();
-Animation *Animation::currentAnimation = nullptr;
-
 void Animation::start() {
   Serial.print("Start animation");
-  Animation::currentAnimation = this;
+  isRunning = true;
   stepNumber = 0;
-  Animation::animationTicker.attach(stepTime, Animation::nextStep);
+  animationTicker.attach(stepTime, Animation::nextStep, this);
 }
 
 void Animation::stop() {
   Serial.print("Stop animation");
-  Animation::currentAnimation = nullptr;
   animationTicker.detach();
+  isRunning = false;
 }
 
 void Animation::updateMqttState() {
   auto deviceTopic = Settings::getInstance()->deviceTopic;
   deviceTopic = deviceTopic.append("pair/");
-  for (uint i = 0; i < currentAnimation->outputNames.size(); i++) {
-    auto portName = deviceTopic.append(currentAnimation->outputNames[i]);
-    bool state = currentAnimation->steps[animationState].back()[i];
+  for (uint i = 0; i < outputNames.size(); i++) {
+    auto portName = deviceTopic.append(outputNames[i]);
+    bool state = steps[animationState].back()[i];
     publishPairMqtt(portName, state);
   }
 }
@@ -91,7 +88,7 @@ void Animation::checkTriggers() {
     if (newState != inputState[i]) {
       if (firstCycle[i]) {
         firstCycle[i] = false;
-        if (Animation::currentAnimation == this) {
+        if (isRunning){
           stop();
         } else {
           start();
@@ -101,4 +98,17 @@ void Animation::checkTriggers() {
       firstCycle[i] = true;
     }
   }
+}
+
+void Animation::setState(std::vector<bool> newState) {
+  for (size_t i = 0; i < steps.size(); i++) {
+    if (steps[i].back() == newState){
+      animationState = i;
+      return;
+    }
+  }
+}
+
+std::vector<bool> Animation::getState() {
+  return steps[animationState].back();
 }
