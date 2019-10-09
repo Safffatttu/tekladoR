@@ -26,7 +26,7 @@ IOPort lampa9 = IOPort(IODevice::expander1, 8, IOType::output);
 IOPort lampa10 = IOPort(IODevice::expander1, 9, IOType::output);
 IOPort lampaKinkiet = IOPort(IODevice::expander1, 10, IOType::output);
 IOPort lampaLazienka = IOPort(IODevice::expander1, 11, IOType::output);
-IOPort wentylatorLazienka = IOPort(IODevice::expander1, 12, IOType::output);
+IOPort wentylatorLazienka = IOPort(IODevice::expander1, 14, IOType::output);
 IOPort lampaSchody = IOPort(IODevice::expander1, 13, IOType::output);
 
 std::vector<IOPort> portsToTest = {
@@ -59,7 +59,7 @@ IOPair io[6] = {
            std::vector<IOPort>{lampaSchody}, "lampaSchody")};
 
 void setupAnimations() {
-    Animation animacjaKlatka = Animation({animacjaInputKlatka}, 
+    Animation* animacjaKlatka = new Animation({animacjaInputKlatka}, 
     {lampa1, lampa2, lampa3, lampa4, lampa5, lampa6, lampa7, lampa8, lampa9, lampa10},
     {
          {
@@ -80,7 +80,7 @@ void setupAnimations() {
     },
     false, {"lampa1", "lampa2", "lampa3", "lampa4", "lampa5", "lampa6", "lampa7", "lampa8", "lampa9", "lampa10"}, 0.1);
 
-    Animation animacjaPs3 = Animation({animacjaInputPs3}, 
+    Animation* animacjaPs3 = new Animation({animacjaInputPs3}, 
     {lampa1, lampa2, lampa3, lampa4, lampa5, lampa6, lampa7, lampa8, lampa9, lampa10},
     {
          {
@@ -101,7 +101,7 @@ void setupAnimations() {
     },
     false, {"lampa1", "lampa2", "lampa3", "lampa4", "lampa5", "lampa6", "lampa7", "lampa8", "lampa9", "lampa10"}, 0.1);
 
-    Animation animacjaLazienka = Animation({animacjaInputLazienka}, 
+    Animation* animacjaLazienka = new Animation({animacjaInputLazienka}, 
     {lampa1, lampa2, lampa3, lampa4, lampa5, lampa6, lampa7, lampa8, lampa9, lampa10},
     {
          {
@@ -118,10 +118,10 @@ void setupAnimations() {
     },
     false, {"lampa1", "lampa2", "lampa3", "lampa4", "lampa5", "lampa6", "lampa7", "lampa8", "lampa9", "lampa10"}, 0.1);
 
-    Animation animacjaWentylator = Animation({wentylatorLazienkaInput},{wentylatorLazienka}, {{{false, true, false}}},false, {"wentylatorLazienka"}, 0.1);
+    Animation* animacjaWentylator = new Animation({wentylatorLazienkaInput},{wentylatorLazienka}, {{{false}, {true}, {false}}},false, {"wentylatorLazienka"}, 0.1);
     AnimationStore::getInstance()->addAnimations({animacjaKlatka, animacjaPs3, animacjaLazienka, animacjaWentylator});
 
-    AnimationStore::getInstance()->addAnimationGroup(std::set<Animation*>{&animacjaKlatka, &animacjaPs3, &animacjaLazienka});
+    AnimationStore::getInstance()->addAnimationGroup(std::set<Animation*>{animacjaKlatka, animacjaPs3, animacjaLazienka});
   //    Animation anim = Animation({input},{output},
   //  {
   //    {{true}, {false}, {true}, {false},{true}, {false}, {true},

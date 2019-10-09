@@ -7,7 +7,7 @@
 
 namespace defaults
 {
-const char *wifi_ssid = "3MAX(01/2,4G)";
+const char *wifi_ssid = "Dom(2,4G)";
 const char *wifi_password = "***REMOVED***";
 IPAddress mqtt_host = IPAddress(192, 168, 1, 8);
 int mqtt_port = 1883;
