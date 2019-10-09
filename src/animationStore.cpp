@@ -14,10 +14,10 @@ void AnimationStore::runAnimation(uint number)
         return;
     }
 
-    animations[number].start();
+    animations[number]->start();
 }
 
-void AnimationStore::addAnimations(std::vector<Animation> newAnimations)
+void AnimationStore::addAnimations(std::vector<Animation*> newAnimations)
 {
     for(auto&& newAnimation : newAnimations)
     {
@@ -35,7 +35,7 @@ void AnimationStore::stopAnimation()
 {
     for (auto &&ani : animations)
     {
-        ani.stop();
+        ani->stop();
     }
 }
 
@@ -43,7 +43,7 @@ void AnimationStore::checkTriggers()
 {
     for (auto &&animation : animations)
     {
-        animation.checkTriggers();
+        animation->checkTriggers();
     }
 }
 
@@ -55,9 +55,11 @@ void AnimationStore::updateAnimationGroup(Animation* trigeringAnimation)
         {
             if (animation == trigeringAnimation)
             {
+                auto newState = trigeringAnimation->getState();
                 for (auto &&animation : group){
                     if (animation == trigeringAnimation) continue;
-                    animation->setState(trigeringAnimation->getState());
+                    
+                    animation->setState(newState);
                 }
             }
         }

@@ -5,7 +5,7 @@
 class AnimationStore
 {
   private:
-    std::vector<Animation> animations;
+    std::vector<Animation*> animations;
     std::set<std::set<Animation*>> animationGroups;
     static AnimationStore *instance;
     AnimationStore();
@@ -22,7 +22,7 @@ class AnimationStore
     }
 
     void setup();
-    void addAnimations(std::vector<Animation> newAnimations);
+    void addAnimations(std::vector<Animation*> newAnimations);
     void runAnimation(uint number);
     void stopAnimation();
     void checkTriggers();

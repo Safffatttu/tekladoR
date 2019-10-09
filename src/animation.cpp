@@ -5,8 +5,9 @@
 #include <messages.hpp>
 #include <settings.hpp>
 
-void Animation::nextStep(Animation* toRun) {
-  if (toRun == nullptr) return;
+void Animation::nextStep(Animation *toRun) {
+  if (toRun == nullptr)
+    return;
   toRun->stepNumber++;
 
   // Check if last animation step -> End animation / loop
@@ -32,11 +33,9 @@ void Animation::nextStep(Animation* toRun) {
   }
 
   Serial.println(toRun->animationState);
-  Serial.println(toRun->stepNumber);
 
   // Apply changes if not end
   for (size_t i = 0; i < toRun->outputs.size(); i++) {
-    Serial.println("ANIMATION");
     if (toRun->steps.size() <= toRun->animationState) {
       Serial.println(toRun->animationState);
       Serial.println("ERROR1");
@@ -52,8 +51,7 @@ void Animation::nextStep(Animation* toRun) {
       Serial.println("ERROR3");
       return;
     }
-    bool newValue =
-        toRun->steps[toRun->animationState][toRun->stepNumber][i];
+    bool newValue = toRun->steps[toRun->animationState][toRun->stepNumber][i];
     toRun->outputs[i].portWrite(newValue);
   }
 }
@@ -82,13 +80,15 @@ void Animation::updateMqttState() {
 }
 
 void Animation::checkTriggers() {
+  // Serial.println("CHECKING TRRIG");
   for (size_t i = 0; i < triggers.size(); i++) {
+    // Serial.println((size_t)&triggers[0]);
     bool newState = (bool)triggers[i].portRead();
 
     if (newState != inputState[i]) {
       if (firstCycle[i]) {
         firstCycle[i] = false;
-        if (isRunning){
+        if (isRunning) {
           stop();
         } else {
           start();
@@ -102,13 +102,21 @@ void Animation::checkTriggers() {
 
 void Animation::setState(std::vector<bool> newState) {
   for (size_t i = 0; i < steps.size(); i++) {
-    if (steps[i].back() == newState){
+    if (steps[i].back() == newState) {
       animationState = i;
+
+      for (size_t j = 0; j < outputs.size(); j++) {
+        outputs[j].portWrite(newState[j]);
+      }
+      updateMqttState();
+
+      animationState++;
+      if (animationState == steps.size()) {
+        animationState = 0;
+      }
       return;
     }
   }
 }
 
-std::vector<bool> Animation::getState() {
-  return steps[animationState].back();
-}
+std::vector<bool> Animation::getState() { return steps[animationState].back(); }

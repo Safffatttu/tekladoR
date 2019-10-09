@@ -13,7 +13,6 @@ private:
   std::vector<IOPort> outputs;
   std::vector<std::vector<std::vector<bool>>> steps;
   std::vector<std::string> outputNames;
-  uint animationState;
   bool loop;
   bool isRunning;
   float stepTime;
@@ -23,6 +22,7 @@ private:
   static void nextStep(Animation* toRun);
 
 public:
+  uint animationState;
   void start();
   void checkTriggers();
   void updateMqttState();
@@ -41,7 +41,12 @@ public:
     {
       output.setup();
     }
-    
+    for (size_t i = 0; i < triggers.size(); i++)
+    {
+      inputState.push_back((bool)triggers[i].portRead());
+      firstCycle.push_back(false);
+    }
+
     stepNumber = 0;
     animationState = 0;
     isRunning = false;
