@@ -1,10 +1,9 @@
 #pragma once
 
-#include <FS.h>
 #include <ESP8266WiFi.h>
+#include <FS.h>
 
-class Settings
-{
+class Settings {
   private:
     Settings();
     void saveSettings();

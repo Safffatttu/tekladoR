@@ -1,17 +1,17 @@
 #include <Arduino.h>
-#include <messages.hpp>
-#include <io.hpp>
 #include <animationStore.hpp>
+#include <io.hpp>
+#include <messages.hpp>
 
 void setup() {
-  Serial.begin(9600);
-  setupNetwork();
-  setupIO();
-  setupAnimations();
-  // testOutputs();
+    Serial.begin(9600);
+    setupNetwork();
+    setupIO();
+    setupAnimations();
+    // testOutputs();
 }
 
 void loop() {
-  checkInputs();
-  AnimationStore::getInstance()->checkTriggers();
+    checkInputs();
+    AnimationStore::getInstance()->checkTriggers();
 }

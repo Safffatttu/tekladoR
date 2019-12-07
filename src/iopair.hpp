@@ -1,8 +1,7 @@
 #pragma once
 #include <ioport.hpp>
 
-class IOPair
-{
+class IOPair {
   public:
     IOPair(std::vector<IOPort> i, std::vector<IOPort> o, std::string n);
 

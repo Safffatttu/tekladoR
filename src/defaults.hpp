@@ -5,8 +5,7 @@
 #define GIT_HASH "1"
 #endif
 
-namespace defaults
-{
+namespace defaults {
 const char *wifi_ssid = "";
 const char *wifi_password = "";
 IPAddress mqtt_host = IPAddress(192, 168, 1, 8);

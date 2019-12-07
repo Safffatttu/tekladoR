@@ -1,10 +1,9 @@
-#include <settings.hpp>
 #include <defaults.hpp>
+#include <settings.hpp>
 
 Settings *Settings::instance = nullptr;
 
-Settings::Settings()
-{
+Settings::Settings() {
 #ifdef DISABLE_FS
     deviceTopic = defaults::deviceTopic;
     wifi_ssid = defaults::wifi_ssid;
@@ -18,8 +17,7 @@ Settings::Settings()
 
     SPIFFS.begin();
 
-    if (!SPIFFS.exists("/settings"))
-    {
+    if (!SPIFFS.exists("/settings")) {
         Serial.println("No values");
         deviceTopic = defaults::deviceTopic;
         wifi_ssid = defaults::wifi_ssid;
@@ -30,9 +28,7 @@ Settings::Settings()
         updatePort = defaults::updatePort;
         updateUrl = defaults::updateUrl;
         saveSettings();
-    }
-    else
-    {
+    } else {
         Serial.println("LoadingData");
         loadSettings();
     }
@@ -41,8 +37,7 @@ Settings::Settings()
 #endif
 }
 
-void Settings::saveSettings()
-{
+void Settings::saveSettings() {
     SPIFFS.begin();
     File settingsFile = SPIFFS.open("/settings", "w+b");
 
@@ -63,37 +58,44 @@ void Settings::saveSettings()
     SPIFFS.end();
 }
 
-void Settings::loadSettings()
-{
+void Settings::loadSettings() {
     SPIFFS.begin();
     File settingsFile = SPIFFS.open("/settings", "r");
 
-    auto deviceTopicLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    auto deviceTopicLine =
+        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     deviceTopicLine = deviceTopicLine.substr(0, deviceTopicLine.size() - 2);
     deviceTopic = deviceTopicLine.c_str();
 
-    auto wifiSsidLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    auto wifiSsidLine =
+        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     wifiSsidLine = wifiSsidLine.substr(0, wifiSsidLine.size() - 2);
     wifi_ssid = wifiSsidLine.c_str();
 
-    auto wifiPasswordLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    auto wifiPasswordLine =
+        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     wifiPasswordLine = wifiPasswordLine.substr(0, wifiPasswordLine.size() - 2);
     wifi_password = wifiPasswordLine.c_str();
 
-    auto mqttHostLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    auto mqttHostLine =
+        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     mqttHostLine = mqttHostLine.substr(0, mqttHostLine.size() - 2);
     mqtt_host.fromString(mqttHostLine.c_str());
 
-    auto mqttPortLine = settingsFile.readStringUntil('\n').substring(0, settingsFile.size() - 5);
+    auto mqttPortLine = settingsFile.readStringUntil('\n').substring(
+        0, settingsFile.size() - 5);
     mqtt_port = atoi(mqttPortLine.c_str());
 
-    auto updateIpLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    auto updateIpLine =
+        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     updateIp = updateIpLine.substr(0, updateIpLine.size() - 2);
 
-    auto updatePortLine = settingsFile.readStringUntil('\n').substring(0, settingsFile.size() - 5);
+    auto updatePortLine = settingsFile.readStringUntil('\n').substring(
+        0, settingsFile.size() - 5);
     updatePort = atoi(updatePortLine.c_str());
 
-    auto updateUrlLine = std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    auto updateUrlLine =
+        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     updateUrl = updateUrlLine.substr(0, updateUrlLine.size() - 2);
 
     Serial.println("device");
@@ -115,16 +117,12 @@ void Settings::loadSettings()
     SPIFFS.end();
 }
 
-Settings *Settings::getInstance()
-{
-    if (instance == nullptr)
-    {
+Settings *Settings::getInstance() {
+    if (instance == nullptr) {
         instance = new Settings();
     }
 
     return instance;
 }
 
-void Settings::updateSettings()
-{
-}
+void Settings::updateSettings() {}

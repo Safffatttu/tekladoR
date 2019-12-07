@@ -1,20 +1,17 @@
 #include <animation.hpp>
-#include <vector>
 #include <set>
+#include <vector>
 
-class AnimationStore
-{
+class AnimationStore {
   private:
-    std::vector<Animation*> animations;
-    std::set<std::set<Animation*>> animationGroups;
+    std::vector<Animation *> animations;
+    std::set<std::set<Animation *>> animationGroups;
     static AnimationStore *instance;
     AnimationStore();
 
   public:
-    static AnimationStore *getInstance()
-    {
-        if (instance == nullptr)
-        {
+    static AnimationStore *getInstance() {
+        if (instance == nullptr) {
             instance = new AnimationStore();
         }
 
@@ -22,11 +19,11 @@ class AnimationStore
     }
 
     void setup();
-    void addAnimations(std::vector<Animation*> newAnimations);
+    void addAnimations(std::vector<Animation *> newAnimations);
     void runAnimation(uint number);
     void stopAnimation();
     void checkTriggers();
-    void updateAnimationGroup(Animation* triggeringAnimation);
-    void addAnimationGroup(std::set<Animation*> animationGroup);
+    void updateAnimationGroup(Animation *triggeringAnimation);
+    void addAnimationGroup(std::set<Animation *> animationGroup);
     uint animationCount();
 };
