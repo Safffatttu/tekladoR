@@ -13,6 +13,7 @@ Settings::Settings() {
     updateIp = defaults::updateIp;
     updatePort = defaults::updatePort;
     updateUrl = defaults::updateUrl;
+    mDNShostName = defaults::mDNShostName;
 #else
 
     SPIFFS.begin();
@@ -27,6 +28,7 @@ Settings::Settings() {
         updateIp = defaults::updateIp;
         updatePort = defaults::updatePort;
         updateUrl = defaults::updateUrl;
+        mDNShostName = defaults::mDNShostName;
         saveSettings();
     } else {
         Serial.println("LoadingData");
@@ -97,6 +99,10 @@ void Settings::loadSettings() {
     auto updateUrlLine =
         std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     updateUrl = updateUrlLine.substr(0, updateUrlLine.size() - 2);
+    
+    auto mDNShostNameLine =
+        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
+    mDNShostName = mDNShostNameLine.substr(0, mDNShostNameLine.size() - 2);
 
     Serial.println("device");
     Serial.println(deviceTopicLine.c_str());

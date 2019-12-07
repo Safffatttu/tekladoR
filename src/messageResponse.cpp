@@ -57,7 +57,5 @@ void parseMessage(std::string *topic, std::string *payload) {
         updateAnimationCount();
     } else if (topic->find("pair/") != std::string::npos) {
         parseIoMessage(topic, payload);
-    } else if (topic->find("startUpdate") != std::string::npos) {
-        updateAndRebot();
     }
 }

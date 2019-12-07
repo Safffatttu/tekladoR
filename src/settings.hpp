@@ -22,4 +22,5 @@ class Settings {
     std::string updateIp;
     uint16_t updatePort;
     std::string updateUrl;
+    std::string mDNShostName;
 };
