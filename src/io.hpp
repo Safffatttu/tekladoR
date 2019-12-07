@@ -1,7 +1,6 @@
 #include <iopair.hpp>
 
-extern IOPair io[6];
-// extern IOPair io[1];
+extern std::vector<IOPair> io;
 
 void setupAnimations();
 void setupIO();
