@@ -1,1 +1,1 @@
-void parseMessage(std::string *topic, std::string *payload);
+void parseMessage(std::string &topic, std::string &payload);

@@ -73,7 +73,7 @@ void onMqttMessage(char *topic, char *payload,
                    size_t index, size_t total) {
     auto topicString = new std::string(topic);
     auto payloadString = new std::string(std::string(payload).substr(0, len));
-    parseMessage(topicString, payloadString);
+    parseMessage(*topicString, *payloadString);
 
     Serial.println("Publish received.");
     Serial.print("  topic: ");
@@ -101,7 +101,7 @@ void onMqttPublish(uint16_t packetId) {
     Serial.println(packetId);
 }
 
-void publishPairMqtt(std::string name, bool state) {
+void publishPairMqtt(std::string &name, bool state) {
     std::string publishTo = std::string(Settings::getInstance()->deviceTopic);
     publishTo = publishTo.append("pair/");
     publishTo = publishTo.append(name);
