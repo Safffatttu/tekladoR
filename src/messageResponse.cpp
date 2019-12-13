@@ -42,18 +42,18 @@ void updateAnimationCount() {
     uint count = AnimationStore::getInstance()->animationCount();
     char countChar[5];
     itoa(count, countChar, 10);
-    std::string topic =
-        (Settings::getInstance()->deviceTopic).append("animation/count");
+    std::string topic = Settings::getInstance()->deviceTopic;
+    topic.append("animation/count");
     publishMqtt(topic.c_str(), 2, true, countChar);
 }
 
 void parseMessage(std::string &topic, std::string &payload) {
-    if (topic.find("animation") != std::string::npos) {
+    if (topic.find("animation/count") != std::string::npos) {
+        updateAnimationCount();
+    } else if (topic.find("animation") != std::string::npos) {
         parseAnimationMessage(topic, payload.c_str());
     } else if (topic.find("checkState") != std::string::npos) {
         updateMqttState();
-    } else if (topic.find("animation/count") != std::string::npos) {
-        updateAnimationCount();
     } else if (topic.find("pair/") != std::string::npos) {
         parseIoMessage(topic, payload);
     }
