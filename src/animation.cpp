@@ -1,9 +1,9 @@
 #include <Ticker.h>
-#include <animation.hpp>
-#include <animationStore.hpp>
-#include <iopair.hpp>
-#include <messages.hpp>
-#include <settings.hpp>
+#include "animation.hpp"
+#include "animationStore.hpp"
+#include "iopair.hpp"
+#include "messages.hpp"
+#include "settings.hpp"
 
 void Animation::nextStep(Animation *toRun) {
     if (toRun == nullptr)

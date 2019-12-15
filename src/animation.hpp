@@ -1,7 +1,7 @@
 #pragma once
+#include "iopair.hpp"
 #include <Ticker.h>
 #include <array>
-#include <iopair.hpp>
 
 class Animation {
   private:

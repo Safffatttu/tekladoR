@@ -1,4 +1,5 @@
-#include <animation.hpp>
+#pragma once
+#include "animation.hpp"
 #include <set>
 #include <vector>
 

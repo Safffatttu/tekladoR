@@ -1,5 +1,5 @@
-#include <defaults.hpp>
-#include <settings.hpp>
+#include "settings.hpp"
+#include "defaults.hpp"
 
 Settings *Settings::instance = nullptr;
 
@@ -99,7 +99,7 @@ void Settings::loadSettings() {
     auto updateUrlLine =
         std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     updateUrl = updateUrlLine.substr(0, updateUrlLine.size() - 2);
-    
+
     auto mDNShostNameLine =
         std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     mDNShostName = mDNShostNameLine.substr(0, mDNShostNameLine.size() - 2);

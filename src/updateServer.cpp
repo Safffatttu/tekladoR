@@ -2,8 +2,8 @@
 #include <ESP8266HTTPUpdateServer.h>
 #include <ESP8266mDNS.h>
 
-#include <settings.hpp>
-#include <updateServer.hpp>
+#include "settings.hpp"
+#include "updateServer.hpp"
 
 ESP8266WebServer web_server(80);
 ESP8266HTTPUpdateServer update_server(true);

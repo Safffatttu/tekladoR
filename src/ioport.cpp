@@ -1,10 +1,10 @@
+#include "ioport.hpp"
 #include <Arduino.h>
-#include <ioport.hpp>
 
 Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;
 
-int IOPort::portRead() {
+int IOPort::portRead() const {
     int newState;
     if (device == IODevice::local) {
         newState = digitalRead(pin);
@@ -17,7 +17,7 @@ int IOPort::portRead() {
     return newState;
 }
 
-void IOPort::portWrite(bool state) {
+void IOPort::portWrite(bool state) const {
     if (device == IODevice::local) {
         digitalWrite(pin, !state);
     } else if (device == IODevice::expander1) {
@@ -27,7 +27,7 @@ void IOPort::portWrite(bool state) {
     }
 }
 
-void IOPort::setup() {
+void IOPort::setup() const {
     uint8_t t = static_cast<uint8_t>(type);
 
     if (device == IODevice::local) {

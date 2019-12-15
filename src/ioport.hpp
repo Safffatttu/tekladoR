@@ -14,12 +14,12 @@ class IOPort {
     IOPort(IODevice device, uint8_t pin, IOType type)
         : device(device), pin(pin), type(type) {}
 
-    int portRead();
-    void portWrite(bool state);
-    void setup();
+    int portRead() const;
+    void portWrite(bool state) const;
+    void setup() const;
 
   private:
-    IODevice device;
-    uint8_t pin;
-    IOType type;
+    const IODevice device;
+    const uint8_t pin;
+    const IOType type;
 };

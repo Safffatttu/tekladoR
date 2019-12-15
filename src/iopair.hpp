@@ -1,5 +1,5 @@
 #pragma once
-#include <ioport.hpp>
+#include "ioport.hpp"
 
 class IOPair {
   public:
@@ -18,6 +18,6 @@ class IOPair {
     std::vector<bool> inputState;
     std::vector<bool> firstCycle;
 
-    std::vector<IOPort> inputPorts;
-    std::vector<IOPort> outputPorts;
+    const std::vector<IOPort> inputPorts;
+    const std::vector<IOPort> outputPorts;
 };

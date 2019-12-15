@@ -1,10 +1,10 @@
+#include "animationStore.hpp"
+#include "io.hpp"
+#include "messages.hpp"
+#include "settings.hpp"
 #include <Arduino.h>
-#include <animationStore.hpp>
-#include <io.hpp>
-#include <messages.hpp>
-#include <settings.hpp>
 
-void parseIoMessage(std::string &topic, std::string &payload) {
+void parseIoMessage(const std::string &topic, const std::string &payload) {
     if (payload.size() == 0)
         return;
     auto indexOfName = topic.find_last_of("/") + 1;
@@ -25,7 +25,7 @@ void updateMqttState() {
     }
 }
 
-void parseAnimationMessage(std::string &topic, const char *payload) {
+void parseAnimationMessage(const std::string &topic, const char *payload) {
     int animationControll = atoi(payload);
     auto positionOfNumber = topic.find_last_of("/");
     auto animationNumberString = topic.substr(positionOfNumber + 1);
@@ -47,7 +47,7 @@ void updateAnimationCount() {
     publishMqtt(topic.c_str(), 2, true, countChar);
 }
 
-void parseMessage(std::string &topic, std::string &payload) {
+void parseMessage(const std::string &topic, const std::string &payload) {
     if (topic.find("animation/count") != std::string::npos) {
         updateAnimationCount();
     } else if (topic.find("animation") != std::string::npos) {

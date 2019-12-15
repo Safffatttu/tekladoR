@@ -1,9 +1,9 @@
-#include <animationStore.hpp>
+#include "animationStore.hpp"
 #include <set>
 
 AnimationStore *AnimationStore::instance = nullptr;
 
-AnimationStore::AnimationStore() {}
+AnimationStore::AnimationStore() = default;
 
 void AnimationStore::runAnimation(uint number) {
     if (number < 0 || number >= animations.size()) {
@@ -33,13 +33,13 @@ void AnimationStore::checkTriggers() {
     }
 }
 
-void AnimationStore::updateAnimationGroup(Animation *trigeringAnimation) {
+void AnimationStore::updateAnimationGroup(Animation *triggeringAnimation) {
     for (auto &&group : animationGroups) {
         for (auto &&animation : group) {
-            if (animation == trigeringAnimation) {
-                auto newState = trigeringAnimation->getState();
+            if (animation == triggeringAnimation) {
+                auto newState = triggeringAnimation->getState();
                 for (auto &&animation : group) {
-                    if (animation == trigeringAnimation)
+                    if (animation == triggeringAnimation)
                         continue;
 
                     animation->setState(newState);

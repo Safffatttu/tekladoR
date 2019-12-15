@@ -101,13 +101,13 @@ void onMqttPublish(uint16_t packetId) {
     Serial.println(packetId);
 }
 
-void publishPairMqtt(std::string &name, bool state) {
+void publishPairMqtt(const std::string &name, bool state) {
     std::string publishTo = std::string(Settings::getInstance()->deviceTopic);
     publishTo = publishTo.append("pair/");
     publishTo = publishTo.append(name);
 
     char stateToPublish[2];
-    itoa((int)state, stateToPublish, 10);
+    itoa(static_cast<int>(state), stateToPublish, 10);
 
     mqttClient.publish(publishTo.c_str(), 2, true, stateToPublish);
 }
