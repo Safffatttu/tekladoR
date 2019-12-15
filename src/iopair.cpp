@@ -22,8 +22,9 @@ void IOPair::setup() {
 }
 
 void IOPair::changeState(bool newState) {
+    this->state = newState;
     for (auto &&outputPort : outputPorts) {
-        outputPort.portWrite(state);
+        outputPort.portWrite(newState);
     }
 }
 
