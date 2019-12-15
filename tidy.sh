@@ -1,0 +1,16 @@
+clang-tidy -checks='*' src/*.cpp -- \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266mDNS/src' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266HTTPUpdateServer/src' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WebServer/src' \
+-I'/Users/jakubberkop/.platformio/lib/AsyncMqttClient_ID346/src' \
+-I'/Users/jakubberkop/.platformio/lib/ESPAsyncTCP_ID305/src' \
+-I'/Users/jakubberkop/.platformio/lib/Adafruit MCP23017 Arduino Library_ID334' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/libraries/Wire' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/libraries/ESP8266WiFi/src' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/libraries/Ticker/src' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/tools/sdk/include' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/tools/sdk/libc/xtensa-lx106-elf/include' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/cores/esp8266' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/tools/sdk/lwip2/include' \
+-I'/Users/jakubberkop/.platformio/packages/framework-arduinoespressif8266/variants/nodemc' \
+-I'~/.platformio/packages/toolchain-xtensa/include/xtensa'
