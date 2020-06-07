@@ -3,8 +3,16 @@
 #include "messages.hpp"
 
 IOPair::IOPair(std::vector<IOPort> i, std::vector<IOPort> o, std::string n)
-    : name(n), state(false), inputState(std::vector<bool>(false)),
-      firstCycle(std::vector<bool>(true)), inputPorts(i), outputPorts(o) {}
+    : name(n), state(false), inputState(std::vector<bool>(i.size())),
+      firstCycle(std::vector<bool>(i.size())), inputPorts(i), outputPorts(o) {
+    for (size_t j = 0; j < inputState.size(); j++) {
+        inputState[j] = true;
+    }
+
+    for (size_t j = 0; j < firstCycle.size(); j++) {
+        firstCycle[j] = true;
+    }
+}
 
 void IOPair::setup() {
     for (auto &&inputPort : inputPorts) {
