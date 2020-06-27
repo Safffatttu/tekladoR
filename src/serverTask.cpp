@@ -15,16 +15,16 @@ void handleGetSite() {
 void handleGetConfig() {
     auto configFile = SPIFFS.open("/ioconfig", "r");
     const auto config = configFile.readString();
-    server.send(200, "text/json", config);
+    server.send(200, "application/json", config);
     configFile.close();
-};
+}
 
 void handleGetSettings() {
     auto settingsFile = SPIFFS.open("/settings", "r");
     const auto settings = settingsFile.readString();
-    server.send(200, "text/json", settings);
+    server.send(200, "application/json", settings);
     settingsFile.close();
-};
+}
 
 void handlePostIo() {
     auto postBody = server.arg("plain");
