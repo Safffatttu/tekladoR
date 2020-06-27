@@ -1,19 +1,31 @@
 #include <ArduinoJson.h>
+#include <FS.h>
 #include <vector>
 
-#include "configManager.hpp"
+#include "IOManager.hpp"
 #include "iopair.hpp"
 #include "ioport.hpp"
 
-ConfigManager::ConfigManager() : ports({}), pairs({}) { loadConfiguration(""); }
+IOManager &IOManager::the() {
+    static IOManager *instance;
+    if (instance == nullptr) {
+        instance = new IOManager();
+    }
+    return *instance;
+}
 
-bool ConfigManager::loadConfiguration(const std::string &configuration) {
+IOManager::IOManager() : ports({}), pairs({}) {}
+
+void IOManager::setup() {
+
     DynamicJsonDocument configDoc(1024);
 
-    DeserializationError error = deserializeJson(configDoc, configuration);
+    File configFile = SPIFFS.open("/ioconfig", "r");
+
+    DeserializationError error = deserializeJson(configDoc, configFile);
 
     if (error) {
-        return false;
+        return;
     }
 
     ports.clear();
@@ -32,11 +44,12 @@ bool ConfigManager::loadConfiguration(const std::string &configuration) {
         ports.push_back(newPort);
     }
 
-    const auto pairRoot = root["ports"].as<JsonArrayConst>();
-    for (const auto &pairRoot : pairRoot) {
+    const auto pairsRoot = root["pairs"].as<JsonArrayConst>();
+
+    for (const auto &pairRoot : pairsRoot) {
         auto const pairData = pairRoot.as<JsonObjectConst>();
 
-        const auto &name = pairData["name"].as<std::string>();
+        const auto &name = pairData["name"].as<const char *>();
 
         std::vector<IOPort *> inputs{0};
         for (auto const port : pairData["inputPorts"].as<JsonArrayConst>()) {
@@ -48,12 +61,19 @@ bool ConfigManager::loadConfiguration(const std::string &configuration) {
         std::vector<IOPort *> outputs{0};
         for (auto const port : pairData["inputPorts"].as<JsonArrayConst>()) {
             const auto index = port.as<int>();
-
             outputs.push_back(&ports[index]);
         }
 
-        IOPair(std::move(inputs), std::move(outputs), name);
+        IOPair newPair(std::move(inputs), std::move(outputs), name);
+        pairs.push_back(std::move(newPair));
     }
 
-    return true;
+    for (auto &pair : pairs) {
+        pair.setup();
+    }
+}
+
+void IOManager::loop() {
+    for (auto &pair : pairs)
+        pair.checkState();
 }

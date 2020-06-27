@@ -3,8 +3,16 @@
 
 Settings *Settings::instance = nullptr;
 
+Settings *Settings::getInstance() {
+    if (instance == nullptr) {
+        instance = new Settings();
+    }
+    return instance;
+}
+
 Settings::Settings() {
-#ifdef DISABLE_FS
+    // if (!SPIFFS.exists("/settings")) {
+    Serial.println("No values");
     deviceTopic = defaults::deviceTopic;
     wifi_ssid = defaults::wifi_ssid;
     wifi_password = defaults::wifi_password;
@@ -13,34 +21,15 @@ Settings::Settings() {
     updateIp = defaults::updateIp;
     updatePort = defaults::updatePort;
     updateUrl = defaults::updateUrl;
-    mDNShostName = defaults::mDNShostName;
-#else
-
-    SPIFFS.begin();
-
-    if (!SPIFFS.exists("/settings")) {
-        Serial.println("No values");
-        deviceTopic = defaults::deviceTopic;
-        wifi_ssid = defaults::wifi_ssid;
-        wifi_password = defaults::wifi_password;
-        mqtt_host = defaults::mqtt_host;
-        mqtt_port = defaults::mqtt_port;
-        updateIp = defaults::updateIp;
-        updatePort = defaults::updatePort;
-        updateUrl = defaults::updateUrl;
-        mDNShostName = defaults::mDNShostName;
-        saveSettings();
-    } else {
-        Serial.println("LoadingData");
-        loadSettings();
-    }
-
-    SPIFFS.end();
-#endif
+    //     saveSettings();
+    // } else {
+    //     Serial.println("LoadingData");
+    //     loadSettings();
+    // }
 }
 
 void Settings::saveSettings() {
-    SPIFFS.begin();
+
     File settingsFile = SPIFFS.open("/settings", "w+b");
 
     Serial.println("save");
@@ -61,7 +50,6 @@ void Settings::saveSettings() {
 }
 
 void Settings::loadSettings() {
-    SPIFFS.begin();
     File settingsFile = SPIFFS.open("/settings", "r");
 
     auto deviceTopicLine =
@@ -100,35 +88,5 @@ void Settings::loadSettings() {
         std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
     updateUrl = updateUrlLine.substr(0, updateUrlLine.size() - 2);
 
-    auto mDNShostNameLine =
-        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
-    mDNShostName = mDNShostNameLine.substr(0, mDNShostNameLine.size() - 2);
-
-    Serial.println("device");
-    Serial.println(deviceTopicLine.c_str());
-    Serial.println("ssid");
-    Serial.println(wifiSsidLine.c_str());
-    Serial.println(wifi_ssid.c_str());
-    Serial.println("password");
-    Serial.println(wifiPasswordLine.c_str());
-    Serial.println(wifi_password.c_str());
-    Serial.println("host");
-    Serial.println(mqttHostLine.c_str());
-    Serial.println(mqtt_host.toString());
-    Serial.println("port");
-    Serial.println(mqttPortLine);
-    Serial.println(mqtt_port);
-    Serial.println("closed");
     settingsFile.close();
-    SPIFFS.end();
 }
-
-Settings *Settings::getInstance() {
-    if (instance == nullptr) {
-        instance = new Settings();
-    }
-
-    return instance;
-}
-
-void Settings::updateSettings() {}

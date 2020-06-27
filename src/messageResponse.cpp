@@ -1,8 +1,9 @@
+#include <Arduino.h>
+
+#include "IOManager.hpp"
 #include "animationStore.hpp"
-#include "io.hpp"
 #include "messages.hpp"
 #include "settings.hpp"
-#include <Arduino.h>
 
 void parseIoMessage(const std::string &topic, const std::string &payload) {
     if (payload.size() == 0)
@@ -12,7 +13,7 @@ void parseIoMessage(const std::string &topic, const std::string &payload) {
 
     int newState = atoi(payload.c_str());
 
-    for (auto &&pair : io) {
+    for (auto &&pair : IOManager::the().getPairs()) {
         if (pair.name == pairName) {
             pair.changeState(newState);
         }
@@ -20,7 +21,7 @@ void parseIoMessage(const std::string &topic, const std::string &payload) {
 }
 
 void updateMqttState() {
-    for (auto &&pair : io) {
+    for (auto &&pair : IOManager::the().getPairs()) {
         pair.updateMqttState();
     }
 }

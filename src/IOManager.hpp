@@ -5,11 +5,16 @@
 #include "iopair.hpp"
 #include "ioport.hpp"
 
-class ConfigManager {
+class IOManager {
   public:
-    ConfigManager();
+    IOManager();
 
-    bool loadConfiguration(const std::string &configuration);
+    void loop();
+    void setup();
+
+    std::vector<IOPair> &getPairs() { return pairs; }
+
+    static IOManager &the();
 
   private:
     std::vector<IOPort> ports;

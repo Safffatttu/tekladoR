@@ -1,4 +1,5 @@
 #include <Ticker.h>
+
 #include "animation.hpp"
 #include "animationStore.hpp"
 #include "iopair.hpp"

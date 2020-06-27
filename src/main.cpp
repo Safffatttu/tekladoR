@@ -1,20 +1,22 @@
 #include <Arduino.h>
-#include <animationStore.hpp>
-#include <io.hpp>
-#include <messages.hpp>
-#include <updateServer.hpp>
+
+#include "IOManager.hpp"
+#include "messages.hpp"
+#include "serverTask.hpp"
+#include "settings.hpp"
 
 void setup() {
     Serial.begin(9600);
+    SPIFFS.begin();
+
+    IOManager::the().setup();
+
     setupNetwork();
-    setupIO();
-    setupAnimations();
-    startUpdateServer();
-    // testOutputs();
+    setupServer();
 }
 
 void loop() {
-    checkInputs();
-    AnimationStore::getInstance()->checkTriggers();
+
+    IOManager::the().loop();
     serverTask();
 }

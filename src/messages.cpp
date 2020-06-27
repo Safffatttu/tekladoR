@@ -1,10 +1,11 @@
-#include "messages.hpp"
-#include "AsyncMqttClient.hpp"
+#include <AsyncMqttClient.hpp>
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
-#include <messageResponse.hpp>
-#include <messageSubscribe.hpp>
-#include <settings.hpp>
+
+#include "messageResponse.hpp"
+#include "messageSubscribe.hpp"
+#include "messages.hpp"
+#include "settings.hpp"
 
 AsyncMqttClient mqttClient;
 
@@ -28,6 +29,7 @@ void connectToMqtt() {
 
 void onWifiConnect(const WiFiEventStationModeGotIP &event) {
     Serial.println("Connected to Wi-Fi.");
+    Serial.println(WiFi.localIP());
     connectToMqtt();
 }
 

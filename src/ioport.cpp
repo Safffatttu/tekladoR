@@ -1,5 +1,6 @@
-#include "ioport.hpp"
 #include <Arduino.h>
+
+#include "ioport.hpp"
 
 Adafruit_MCP23017 mcp1;
 Adafruit_MCP23017 mcp2;

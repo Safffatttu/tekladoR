@@ -15,5 +15,4 @@ const std::string updateIp = "";
 const uint16_t updatePort = 8090;
 const std::string updateUrl = "";
 const std::string version = GIT_HASH;
-const std::string mDNShostName = HOSTNAME;
 } // namespace defaults
