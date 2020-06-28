@@ -20,11 +20,19 @@ void IOManager::setup() {
 
     DynamicJsonDocument configDoc(1024);
 
-    File configFile = SPIFFS.open("/ioconfig", "r");
+    if (!SPIFFS.exists("/ioconfig")) {
+        Serial.println("Did not found io config file");
+        return;
+    }
 
+    auto configFile = SPIFFS.open("/ioconfig", "r");
     DeserializationError error = deserializeJson(configDoc, configFile);
 
+    configFile.close();
+
     if (error) {
+        Serial.println("COULD NO DESERIALIZE CONFIGS");
+        Serial.println(error.c_str());
         return;
     }
 
