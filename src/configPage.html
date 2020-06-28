@@ -34,6 +34,15 @@
 				}
 			};
 			settingsConfigReq.send(null);
+
+			var serialNumReq = new XMLHttpRequest();
+			serialNumReq.open("GET", "/getserialnum", true);
+			serialNumReq.onreadystatechange = function () {
+				if (serialNumReq.readyState == 4 && serialNumReq.status == 200) {
+					document.getElementById("serialNum").textContent = serialNumReq.responseText;
+				}
+			};
+			serialNumReq.send(null);
 		};
 
 	</script>
@@ -41,16 +50,23 @@
 
 <body onload="loadConfiguration()">
 	<h1>TekladoR IO Module configurator</h1>
+	Serial number: <span id="serialNum"></span>
 	<br>
 
-
-	<textarea id="settingsText" name="Settings" rows="10" cols="50"></textarea>
-	<br>
-	<button onclick="uploadSettings()">Upload settings</button>
-	<br>
-	<textarea id="ioText" name="IO configuration" rows="30" cols="40"></textarea>
-	<br>
-	<button onclick="uploadIoConfig()">Upload configuration</button>
+	<p>
+		<label for="settingsText">Settings</label>
+		<br>
+		<textarea id="settingsText" name="Settings" rows="10" cols="50"></textarea>
+		<br>
+		<button onclick="uploadSettings()">Upload settings</button>
+	</p>
+	<p>
+		<label for="ioText">Io configuration</label>
+		<br>
+		<textarea id="ioText" name="IO configuration" rows="30" cols="40"></textarea>
+		<br>
+		<button onclick="uploadIoConfig()">Upload configuration</button>
+	</p>
 	<br>
 	<br>
 	<br>

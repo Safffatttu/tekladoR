@@ -3,6 +3,7 @@
 
 #include "IOManager.hpp"
 #include "configPage.h"
+#include "settings.hpp"
 
 ESP8266WebServer server(80);
 
@@ -24,6 +25,11 @@ void handleGetSettings() {
     const auto settings = settingsFile.readString();
     server.send(200, "application/json", settings);
     settingsFile.close();
+}
+
+void handleGetSerialNum() {
+    const auto serialNum = String(spi_flash_get_id());
+    server.send(200, "text/text", serialNum);
 }
 
 void handlePostIo() {
@@ -55,6 +61,7 @@ void setupServer() {
 
     server.on("/getioconfig", HTTP_GET, handleGetConfig);
     server.on("/getsettings", HTTP_GET, handleGetSettings);
+    server.on("/getserialnum", HTTP_GET, handleGetSerialNum);
 
     server.on("/setioconfig", HTTP_POST, handlePostIo);
     server.on("/setsettings", HTTP_POST, handlePostSettings);
