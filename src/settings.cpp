@@ -1,5 +1,9 @@
-#include "settings.hpp"
+#include <Arduino.h>
+#include <ArduinoJson.h>
+#include <FS.h>
+
 #include "defaults.hpp"
+#include "settings.hpp"
 
 Settings *Settings::instance = nullptr;
 
@@ -11,8 +15,18 @@ Settings *Settings::getInstance() {
 }
 
 Settings::Settings() {
-    // if (!SPIFFS.exists("/settings")) {
-    Serial.println("No values");
+    if (!SPIFFS.exists("/settings")) {
+        Serial.println("No settings file");
+        Serial.println("Loading default");
+        loadDefaults();
+        saveSettings();
+    } else {
+        Serial.println("Loading settings from file");
+        loadSettings();
+    }
+}
+
+void Settings::loadDefaults() {
     deviceTopic = defaults::deviceTopic;
     wifi_ssid = defaults::wifi_ssid;
     wifi_password = defaults::wifi_password;
@@ -21,72 +35,45 @@ Settings::Settings() {
     updateIp = defaults::updateIp;
     updatePort = defaults::updatePort;
     updateUrl = defaults::updateUrl;
-    //     saveSettings();
-    // } else {
-    //     Serial.println("LoadingData");
-    //     loadSettings();
-    // }
 }
 
 void Settings::saveSettings() {
 
-    File settingsFile = SPIFFS.open("/settings", "w+b");
+    DynamicJsonDocument settingsDoc(1024);
 
-    Serial.println("save");
-    settingsFile.println(deviceTopic.c_str());
-    settingsFile.println(wifi_ssid.c_str());
-    settingsFile.println(wifi_password.c_str());
-    settingsFile.println(mqtt_host.toString());
-    settingsFile.println(mqtt_port);
-    settingsFile.println(updateIp.c_str());
-    settingsFile.println(updatePort);
-    settingsFile.println(updateUrl.c_str());
+    auto settingsObj = settingsDoc.to<JsonObject>();
 
-    settingsFile.seek(0);
-    Serial.println(settingsFile.readString());
+    settingsObj["deviceTopic"] = deviceTopic.c_str();
+    settingsObj["wifi_ssid"] = wifi_ssid.c_str();
+    settingsObj["wifi_password"] = wifi_password.c_str();
+    settingsObj["mqtt_host"] = mqtt_host.toString();
+    settingsObj["mqtt_port"] = mqtt_port;
 
+    File settingsFile = SPIFFS.open("/settings", "w");
+    serializeJsonPretty(settingsDoc, settingsFile);
     settingsFile.close();
-    SPIFFS.end();
 }
 
 void Settings::loadSettings() {
     File settingsFile = SPIFFS.open("/settings", "r");
+    DynamicJsonDocument settingsDoc(1024);
 
-    auto deviceTopicLine =
-        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
-    deviceTopicLine = deviceTopicLine.substr(0, deviceTopicLine.size() - 2);
-    deviceTopic = deviceTopicLine.c_str();
-
-    auto wifiSsidLine =
-        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
-    wifiSsidLine = wifiSsidLine.substr(0, wifiSsidLine.size() - 2);
-    wifi_ssid = wifiSsidLine.c_str();
-
-    auto wifiPasswordLine =
-        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
-    wifiPasswordLine = wifiPasswordLine.substr(0, wifiPasswordLine.size() - 2);
-    wifi_password = wifiPasswordLine.c_str();
-
-    auto mqttHostLine =
-        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
-    mqttHostLine = mqttHostLine.substr(0, mqttHostLine.size() - 2);
-    mqtt_host.fromString(mqttHostLine.c_str());
-
-    auto mqttPortLine = settingsFile.readStringUntil('\n').substring(
-        0, settingsFile.size() - 5);
-    mqtt_port = atoi(mqttPortLine.c_str());
-
-    auto updateIpLine =
-        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
-    updateIp = updateIpLine.substr(0, updateIpLine.size() - 2);
-
-    auto updatePortLine = settingsFile.readStringUntil('\n').substring(
-        0, settingsFile.size() - 5);
-    updatePort = atoi(updatePortLine.c_str());
-
-    auto updateUrlLine =
-        std::string(settingsFile.readStringUntil('\n').c_str()).append("a");
-    updateUrl = updateUrlLine.substr(0, updateUrlLine.size() - 2);
-
+    auto error = deserializeJson(settingsDoc, settingsFile);
     settingsFile.close();
+    if (error) {
+        Serial.println("Could not deserialize settings");
+        Serial.println(error.c_str());
+        loadDefaults();
+        return;
+    }
+
+    auto settingsObj = settingsDoc.as<JsonObjectConst>();
+
+    deviceTopic = settingsObj["deviceTopic"].as<const char *>();
+    wifi_ssid = settingsObj["wifi_ssid"].as<const char *>();
+    wifi_password = settingsObj["wifi_password"].as<const char *>();
+    const auto mqtt_host_string = settingsObj["mqtt_host"].as<const char *>();
+    mqtt_host = IPAddress().fromString(mqtt_host_string);
+    mqtt_port = settingsObj["mqtt_port"].as<uint>();
+    Serial.print("HERER YO YO YO ");
 }

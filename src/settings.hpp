@@ -8,6 +8,7 @@ class Settings {
     Settings();
     void saveSettings();
     void loadSettings();
+    void loadDefaults();
     static Settings *instance;
 
   public:
