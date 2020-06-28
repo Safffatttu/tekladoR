@@ -49,17 +49,17 @@ void IOManager::setup() {
     for (const auto &pairRoot : pairsRoot) {
         auto const pairData = pairRoot.as<JsonObjectConst>();
 
-        const auto &name = pairData["name"].as<const char *>();
+        const auto name = pairData["name"].as<const char *>();
 
-        std::vector<IOPort *> inputs{0};
+        std::vector<IOPort *> inputs;
         for (auto const port : pairData["inputPorts"].as<JsonArrayConst>()) {
             const auto index = port.as<int>();
 
             inputs.push_back(&ports[index]);
         }
 
-        std::vector<IOPort *> outputs{0};
-        for (auto const port : pairData["inputPorts"].as<JsonArrayConst>()) {
+        std::vector<IOPort *> outputs;
+        for (auto const port : pairData["outputPorts"].as<JsonArrayConst>()) {
             const auto index = port.as<int>();
             outputs.push_back(&ports[index]);
         }
