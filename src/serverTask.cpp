@@ -27,24 +27,26 @@ void handleGetSettings() {
 }
 
 void handlePostIo() {
-    auto postBody = server.arg("plain");
+    const auto postBody = server.arg("plain");
     auto newConfigFile = SPIFFS.open("/ioconfig", "w");
     newConfigFile.print(postBody);
     newConfigFile.close();
 
+    Serial.println("Post body");
     Serial.print(postBody);
 
-    IOManager::the().setup();
+    ESP.reset();
 }
 
 void handlePostSettings() {
-    auto postBody = server.arg("plain");
-    auto newConfigFile = SPIFFS.open("/settings", "w");
-    newConfigFile.print(postBody);
-    newConfigFile.close();
+    const auto postBody = server.arg("plain");
+    auto newSettingsFile = SPIFFS.open("/settings", "w");
+    newSettingsFile.print(postBody);
+    newSettingsFile.close();
 
+    Serial.println("Post body");
     Serial.print(postBody);
-    SPIFFS.end();
+
     ESP.reset();
 }
 
