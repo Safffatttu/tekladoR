@@ -6,7 +6,7 @@
 #include "settings.hpp"
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(921600);
     SPIFFS.begin();
 
     IOManager::the().setup();
