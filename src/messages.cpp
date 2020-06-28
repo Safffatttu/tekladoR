@@ -1,6 +1,7 @@
 #include <AsyncMqttClient.hpp>
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
+#include <string>
 
 #include "messageResponse.hpp"
 #include "messageSubscribe.hpp"
@@ -122,7 +123,14 @@ void publishMqtt(const char *topic, uint8_t qos, bool retain,
 void setupNetwork() {
     wifiConnectHandler = WiFi.onStationModeGotIP(onWifiConnect);
     wifiDisconnectHandler = WiFi.onStationModeDisconnected(onWifiDisconnect);
-    WiFi.mode(WiFiMode::WIFI_STA);
+
+    WiFi.mode(WiFiMode::WIFI_AP_STA);
+
+    // Reconfiguration acess point
+    const auto reconfigureSSID =
+        "TEKLAD_R_RECONF_" + String(spi_flash_get_id());
+    const auto reconfigurePass = Settings::getInstance()->reconfigurePass;
+    WiFi.softAP(reconfigureSSID.c_str(), reconfigurePass.c_str(), 1, 1);
 
     mqttClient.onConnect(onMqttConnect);
     mqttClient.onDisconnect(onMqttDisconnect);
