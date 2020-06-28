@@ -32,9 +32,6 @@ void Settings::loadDefaults() {
     wifi_password = defaults::wifi_password;
     mqtt_host = defaults::mqtt_host;
     mqtt_port = defaults::mqtt_port;
-    updateIp = defaults::updateIp;
-    updatePort = defaults::updatePort;
-    updateUrl = defaults::updateUrl;
 }
 
 void Settings::saveSettings() {
