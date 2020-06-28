@@ -1,4 +1,62 @@
-<h1>TekladoR IO Module configurator</h1><br>
-<a href="getioconfig">Show current Configuration</a><br>
-<a href="getsettings">Show current Settings</a><br>
-<a href="https://github.com/Safffatttu/tekladoR">Documentation and source code</a>
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script>
+		function uploadSettings() {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "/setsettings", true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.send(document.getElementById("settingsText").value);
+		};
+
+		function uploadIoConfig() {
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "/setioconfig", true);
+			xhr.setRequestHeader('Content-Type', 'application/json');
+			xhr.send(document.getElementById("ioText").value);
+		};
+
+		function loadConfiguration() {
+			var ioConfigReq = new XMLHttpRequest();
+			ioConfigReq.open("GET", "/getioconfig", true);
+			ioConfigReq.onreadystatechange = function () {
+				if (ioConfigReq.readyState == 4 && ioConfigReq.status == 200) {
+					document.getElementById("ioText").value = ioConfigReq.responseText
+				}
+			};
+			ioConfigReq.send(null);
+			var settingsConfigReq = new XMLHttpRequest();
+			settingsConfigReq.open("GET", "/getsettings", true);
+			settingsConfigReq.onreadystatechange = function () {
+				if (settingsConfigReq.readyState == 4 && settingsConfigReq.status == 200) {
+					document.getElementById("settingsText").value = settingsConfigReq.responseText;
+				}
+			};
+			settingsConfigReq.send(null);
+		};
+
+	</script>
+</head>
+
+<body onload="loadConfiguration()">
+	<h1>TekladoR IO Module configurator</h1>
+	<br>
+
+
+	<textarea id="settingsText" name="Settings" rows="10" cols="50"></textarea>
+	<br>
+	<button onclick="uploadSettings()">Upload settings</button>
+	<br>
+	<textarea id="ioText" name="IO configuration" rows="30" cols="40"></textarea>
+	<br>
+	<button onclick="uploadIoConfig()">Upload configuration</button>
+	<br>
+	<br>
+	<br>
+
+	<a href="https://github.com/Safffatttu/tekladoR">Documentation and source code</a>
+
+</body>
+
+</html>
