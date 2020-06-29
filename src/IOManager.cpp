@@ -62,6 +62,8 @@ void IOManager::setup() {
         auto const pairData = pairRoot.as<JsonObjectConst>();
 
         const auto name = pairData["name"].as<const char *>();
+        const auto mode = pairData["mode"].as<uint>() ? TriggerMode::Momentary
+                                                      : TriggerMode::Bistable;
 
         std::vector<IOPort *> inputs;
         for (auto const port : pairData["inputPorts"].as<JsonArrayConst>()) {
@@ -76,7 +78,7 @@ void IOManager::setup() {
             outputs.push_back(&ports[index]);
         }
 
-        IOPair newPair(std::move(inputs), std::move(outputs), name);
+        IOPair newPair(std::move(inputs), std::move(outputs), name, mode);
         pairs.push_back(std::move(newPair));
     }
 

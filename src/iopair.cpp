@@ -2,11 +2,13 @@
 #include "ioport.hpp"
 #include "messages.hpp"
 
-IOPair::IOPair(std::vector<IOPort *> i, std::vector<IOPort *> o, std::string n)
-    : name(n), state(false), inputState(std::vector<bool>(i.size())),
-      firstCycle(std::vector<bool>(i.size())), inputPorts(i), outputPorts(o) {
-    for (size_t j = 0; j < inputState.size(); j++) {
-        inputState[j] = true;
+IOPair::IOPair(std::vector<IOPort *> i, std::vector<IOPort *> o, std::string n,
+               TriggerMode mode)
+    : name(n), state(false), initialState(i.size()), firstCycle(i.size()),
+      inputPorts(std::move(i)), outputPorts(std::move(o)), mode(mode) {
+
+    for (size_t j = 0; j < initialState.size(); j++) {
+        initialState[j] = true;
     }
 
     for (size_t j = 0; j < firstCycle.size(); j++) {
@@ -25,7 +27,7 @@ void IOPair::setup() {
     }
 
     for (size_t i = 0; i < inputPorts.size(); i++) {
-        inputState[i] = static_cast<bool>(inputPorts[i]->portRead());
+        initialState[i] = inputPorts[i]->portRead();
     }
 }
 
@@ -37,20 +39,39 @@ void IOPair::changeState(bool newState) {
 }
 
 void IOPair::checkState() {
-    for (size_t i = 0; i < inputPorts.size(); i++) {
-        bool newState = static_cast<bool>(inputPorts[i]->portRead());
 
-        if (newState != inputState[i]) {
-            if (firstCycle[i]) {
-                firstCycle[i] = false;
+    if (mode == TriggerMode::Momentary) {
+        for (size_t i = 0; i < inputPorts.size(); i++) {
+            bool newState = inputPorts[i]->portRead();
+
+            if (newState != initialState[i]) {
+                if (firstCycle[i]) {
+                    firstCycle[i] = false;
+                    state = !state;
+                    for (const auto outputPort : outputPorts) {
+                        outputPort->portWrite(state);
+                    }
+                    updateMqttState();
+                }
+            } else {
+                firstCycle[i] = true;
+            }
+        }
+    } else { // TriggerMode::Bistable
+        for (size_t i = 0; i < inputPorts.size(); i++) {
+
+            auto &previousState = initialState[i];
+            bool newState = inputPorts[i]->portRead();
+
+            if (newState != previousState) {
                 state = !state;
-                publishPairMqtt(name, state);
+                previousState = newState;
+
                 for (const auto outputPort : outputPorts) {
                     outputPort->portWrite(state);
                 }
+                updateMqttState();
             }
-        } else {
-            firstCycle[i] = true;
         }
     }
 }
