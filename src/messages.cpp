@@ -74,9 +74,9 @@ void onMqttUnsubscribe(uint16_t packetId) {
 void onMqttMessage(char *topic, char *payload,
                    AsyncMqttClientMessageProperties properties, size_t len,
                    size_t index, size_t total) {
-    auto topicString = new std::string(topic);
-    auto payloadString = new std::string(std::string(payload).substr(0, len));
-    parseMessage(*topicString, *payloadString);
+    const auto topicString = std::string(topic);
+    const auto payloadString = std::string(std::string(payload).substr(0, len));
+    parseMessage(topicString, payloadString);
 
     Serial.println("Publish received.");
     Serial.print("  topic: ");
@@ -93,9 +93,6 @@ void onMqttMessage(char *topic, char *payload,
     Serial.println(index);
     Serial.print("  total: ");
     Serial.println(total);
-
-    delete topicString;
-    delete payloadString;
 }
 
 void onMqttPublish(uint16_t packetId) {
@@ -105,14 +102,10 @@ void onMqttPublish(uint16_t packetId) {
 }
 
 void publishPairMqtt(const std::string &name, bool state) {
-    std::string publishTo = std::string(Settings::getInstance()->deviceTopic);
-    publishTo = publishTo.append("pair/");
-    publishTo = publishTo.append(name);
-
     char stateToPublish[2];
     itoa(static_cast<int>(state), stateToPublish, 10);
 
-    mqttClient.publish(publishTo.c_str(), 2, true, stateToPublish);
+    mqttClient.publish(name.c_str(), 2, true, stateToPublish);
 }
 
 void publishMqtt(const char *topic, uint8_t qos, bool retain,

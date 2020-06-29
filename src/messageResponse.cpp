@@ -8,13 +8,10 @@
 void parseIoMessage(const std::string &topic, const std::string &payload) {
     if (payload.size() == 0)
         return;
-    auto indexOfName = topic.find_last_of("/") + 1;
-    std::string pairName = topic.substr(indexOfName);
-
     int newState = atoi(payload.c_str());
 
-    for (auto &&pair : IOManager::the().getPairs()) {
-        if (pair.name == pairName) {
+    for (auto &pair : IOManager::the().getPairs()) {
+        if (pair.name == topic) {
             pair.changeState(newState);
         }
     }
@@ -55,7 +52,7 @@ void parseMessage(const std::string &topic, const std::string &payload) {
         parseAnimationMessage(topic, payload.c_str());
     } else if (topic.find("checkState") != std::string::npos) {
         updateMqttState();
-    } else if (topic.find("pair/") != std::string::npos) {
+    } else {
         parseIoMessage(topic, payload);
     }
 }
