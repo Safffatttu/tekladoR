@@ -1,41 +1,43 @@
+#include <Adafruit_MCP23017.h>
 #include <Arduino.h>
 
 #include "ioport.hpp"
 
-Adafruit_MCP23017 mcp1;
-Adafruit_MCP23017 mcp2;
+std::array<Adafruit_MCP23017, 8> IOPort::expanders;
+std::vector<uint8_t> IOPort::expandersToSetup = {};
 
 int IOPort::portRead() const {
-    int newState;
-    if (device == IODevice::local) {
-        newState = digitalRead(pin);
-    } else if (device == IODevice::expander1) {
-        newState = mcp1.digitalRead(pin);
+    if (deviceNum == 0) {
+        return digitalRead(pin);
     } else {
-        newState = mcp2.digitalRead(pin);
+        auto &expander = expanders[deviceNum - 1];
+        return expander.digitalRead(pin);
     }
-
-    return newState;
 }
 
 void IOPort::portWrite(bool state) const {
-    if (device == IODevice::local) {
-        digitalWrite(pin, !state);
-    } else if (device == IODevice::expander1) {
-        mcp1.digitalWrite(pin, !state);
+    if (deviceNum == 0) {
+        digitalWrite(pin, invert ^ state);
     } else {
-        mcp2.digitalWrite(pin, !state);
+        auto &expander = expanders[deviceNum - 1];
+        expander.digitalWrite(pin, invert ^ state);
     }
 }
 
 void IOPort::setup() const {
     uint8_t t = static_cast<uint8_t>(type);
-
-    if (device == IODevice::local) {
+    if (deviceNum == 0) {
         pinMode(pin, t);
-    } else if (device == IODevice::expander1) {
-        mcp1.pinMode(pin, t);
     } else {
-        mcp2.pinMode(pin, t);
+        auto &expander = expanders[deviceNum - 1];
+        expander.pinMode(pin, t);
     }
 }
+
+void IOPort::setupExpanders() {
+    for (const auto index : expandersToSetup) {
+        auto &expander = expanders[index];
+        expander.begin(index);
+    }
+    expandersToSetup.clear();
+};

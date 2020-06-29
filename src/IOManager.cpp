@@ -47,10 +47,14 @@ void IOManager::setup() {
         const auto pin = portData["pin"].as<unsigned int>();
         const auto type =
             portData["type"].as<int>() ? IOType::input : IOType::output;
+        const auto device = portData["device"].as<uint8_t>();
+        const auto invert = portData["invert"].as<bool>();
 
-        const IOPort newPort(IODevice::local, pin, type);
+        IOPort newPort(pin, type, device, invert);
         ports.push_back(newPort);
     }
+
+    IOPort::setupExpanders();
 
     const auto pairsRoot = root["pairs"].as<JsonArrayConst>();
 
