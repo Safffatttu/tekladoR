@@ -7,15 +7,16 @@
 			var xhr = new XMLHttpRequest();
 			xhr.open("POST", "/setsettings", true);
 			xhr.setRequestHeader('Content-Type', 'application/json');
-			let settingText = document.getElementById("settingsText").value;
 
-			try {
-				JSON.parse(settingText);
-			} catch (error) {
-				alert("Could not parse settings");
-				return;
-			}
+			let settings = {};
 
+			settings.deviceTopic = document.getElementById("deviceTopicInput").value;
+			settings.wifi_ssid = document.getElementById("wifi_ssidInput").value;
+			settings.wifi_password = document.getElementById("wifi_passwordInput").value;
+			settings.mqtt_host = document.getElementById("mqtt_hostInput").value;
+			settings.mqtt_port = document.getElementById("mqtt_portInput").value;
+
+			let settingText = JSON.stringify(settings);
 			xhr.send(settingText);
 		};
 
@@ -49,7 +50,13 @@
 			settingsConfigReq.open("GET", "/getsettings", true);
 			settingsConfigReq.onreadystatechange = function () {
 				if (settingsConfigReq.readyState == 4 && settingsConfigReq.status == 200) {
-					document.getElementById("settingsText").value = settingsConfigReq.responseText;
+					let data = JSON.parse(settingsConfigReq.responseText);
+
+					document.getElementById("deviceTopicInput").value = data.deviceTopic;
+					document.getElementById("wifi_ssidInput").value = data.wifi_ssid;
+					document.getElementById("wifi_passwordInput").value = data.wifi_password;
+					document.getElementById("mqtt_hostInput").value = data.mqtt_host;
+					document.getElementById("mqtt_portInput").value = data.mqtt_port;
 				}
 			};
 			settingsConfigReq.send(null);
@@ -74,10 +81,41 @@
 
 	<p>
 		<label for="settingsText">Settings</label>
-		<br>
-		<textarea id="settingsText" name="Settings" rows="10" cols="50"></textarea>
-		<br>
-		<button onclick="uploadSettings()">Upload settings</button>
+
+	<table>
+		<tr>
+			<td>deviceTopic</td>
+			<td>
+				<input type="text" id="deviceTopicInput">
+			</td>
+		</tr>
+		<tr>
+			<td>wifi_ssid</td>
+			<td>
+				<input type="text" id="wifi_ssidInput">
+			</td>
+		</tr>
+		<tr>
+			<td>wifi_password</td>
+			<td>
+				<input type="text" id="wifi_passwordInput">
+			</td>
+		</tr>
+		<tr>
+			<td>mqtt_host</td>
+			<td>
+				<input type="text" id="mqtt_hostInput">
+			</td>
+		</tr>
+		<tr>
+			<td>mqtt_port</td>
+			<td>
+				<input type="text" id="mqtt_portInput">
+			</td>
+		</tr>
+	</table>
+
+	<button onclick="uploadSettings()">Upload settings</button>
 	</p>
 	<p>
 		<label for="ioText">Io configuration</label>

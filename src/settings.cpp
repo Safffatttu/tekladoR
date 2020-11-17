@@ -72,5 +72,4 @@ void Settings::loadSettings() {
     const auto mqtt_host_string = settingsObj["mqtt_host"].as<const char *>();
     mqtt_host = IPAddress().fromString(mqtt_host_string);
     mqtt_port = settingsObj["mqtt_port"].as<uint>();
-    Serial.print("HERER YO YO YO ");
 }
