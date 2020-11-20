@@ -2,15 +2,15 @@
 #include <FS.h>
 
 #include "IOManager.hpp"
-#include "configPage.h"
 #include "settings.hpp"
 
 ESP8266WebServer server(80);
 
 void handleGetSite() {
-    server.send(200, "text/html",
-                reinterpret_cast<const char *>(src_configPage_html),
-                src_configPage_html_len);
+    auto file = SPIFFS.open("/configPage.html", "r");
+    const auto config = file.readString();
+    file.close();
+    server.send(200, "text/html", config);
 }
 
 void handleGetConfig() {
