@@ -2,6 +2,13 @@
 <html>
 
 <head>
+	<style>
+		th,
+		td {
+			border: 1px solid black;
+		}
+	</style>
+
 	<script>
 		function uploadSettings() {
 			var xhr = new XMLHttpRequest();
@@ -36,15 +43,76 @@
 			xhr.send(configText);
 		};
 
+		// let ob = JSON.parse('{"ports": [{"pin": "5","type": "0"},{"pin": "4","type": "1"}],"pairs": [{"name": "string","mode": 0,"inputPorts": [0],"outputPorts": [1]}]}');
+
+		function setIoTable(config) {
+			let portsTable = document.getElementById("portsTable");
+
+			const ports = config.ports;
+			const pairs = config.pairs;
+
+			for (let i = 0; i < ports.length; i++) {
+				const port = ports[i];
+
+				let row = portsTable.insertRow();
+				let cell = row.insertCell();
+				cell.textContent = i;
+
+				cell = row.insertCell();
+				cell.textContent = port.pin;
+
+				cell = row.insertCell();
+				cell.textContent = port.type ? "output" : "intput";
+			};
+
+			let pairsTable = document.getElementById("pairsTable");
+
+			pairs.forEach(pair => {
+				let row = pairsTable.insertRow();
+
+				let cell = row.insertCell();
+				cell.textContent = pair.name;
+
+				cell = row.insertCell();
+				cell.textContent = pair.mode ? "Momentary" : "Bistable ";
+
+				let inputPortsSelect = document.createElement("select");
+				inputPortsSelect.multiple = true;
+
+				let outputPortsSelect = document.createElement("select");
+				outputPortsSelect.multiple = true;
+
+				for (let i = 0; i < ports.length; i++) {
+					const port = ports[i];
+					let option = document.createElement("option");
+					option.text = port.pin;
+
+					if (port.type == 0) {
+						inputPortsSelect.appendChild(option);
+					} else if (port.type == 1) {
+						outputPortsSelect.appendChild(option);
+					}
+				}
+				cell = row.insertCell();
+				cell.appendChild(inputPortsSelect);
+
+				cell = row.insertCell();
+				cell.appendChild(outputPortsSelect);
+			});
+
+		}
+
 		function loadConfiguration() {
 			var ioConfigReq = new XMLHttpRequest();
 			ioConfigReq.open("GET", "/getioconfig", true);
 			ioConfigReq.onreadystatechange = function () {
 				if (ioConfigReq.readyState == 4 && ioConfigReq.status == 200) {
-					document.getElementById("ioText").value = ioConfigReq.responseText
+					setIoTable(JSON.parse(ioConfigReq.responseText));
 				}
 			};
 			ioConfigReq.send(null);
+
+			setIoTable(ob);
 
 			var settingsConfigReq = new XMLHttpRequest();
 			settingsConfigReq.open("GET", "/getsettings", true);
@@ -117,13 +185,30 @@
 
 	<button onclick="uploadSettings()">Upload settings</button>
 	</p>
+
 	<p>
-		<label for="ioText">Io configuration</label>
-		<br>
-		<textarea id="ioText" name="IO configuration" rows="30" cols="40"></textarea>
-		<br>
-		<button onclick="uploadIoConfig()">Upload configuration</button>
+		Ports
+	<table id="portsTable">
+		<tr>
+			<td>Port</td>
+			<td>Type</td>
+		</tr>
+	</table>
+
+	Pairs
+	<table id="pairsTable">
+		<tr>
+			<td>Name</td>
+			<td>Mode</td>
+			<td>Inputs</td>
+			<td>Outputs</td>
+		</tr>
+	</table>
+
+	<br>
+	<button onclick="uploadIoConfig()">Upload configuration</button>
 	</p>
+
 	<br>
 	<br>
 	<br>
