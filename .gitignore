@@ -12,3 +12,5 @@ src/configPage.h
 .vscode/launch.json
 .vscode
 */__pycache__/*
+
+data/settings
