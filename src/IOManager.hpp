@@ -6,17 +6,17 @@
 #include "ioport.hpp"
 
 class IOManager {
-  public:
-    IOManager();
+public:
+	IOManager();
 
-    void loop();
-    void setup();
+	void loop();
+	void setup();
 
-    std::vector<IOPair> &getPairs() { return pairs; }
+	std::vector<IOPair> &getPairs() { return pairs; }
 
-    static IOManager &the();
+	static IOManager &the();
 
-  private:
-    std::vector<IOPort> ports;
-    std::vector<IOPair> pairs;
+private:
+	std::vector<IOPort> ports;
+	std::vector<IOPair> pairs;
 };

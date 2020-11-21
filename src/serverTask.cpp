@@ -7,66 +7,66 @@
 ESP8266WebServer server(80);
 
 void handleGetSite() {
-    auto file = SPIFFS.open("/configPage.html", "r");
-    const auto config = file.readString();
-    file.close();
-    server.send(200, "text/html", config);
+	auto file = SPIFFS.open("/configPage.html", "r");
+	const auto config = file.readString();
+	file.close();
+	server.send(200, "text/html", config);
 }
 
 void handleGetConfig() {
-    auto configFile = SPIFFS.open("/ioconfig", "r");
-    const auto config = configFile.readString();
-    server.send(200, "application/json", config);
-    configFile.close();
+	auto configFile = SPIFFS.open("/ioconfig", "r");
+	const auto config = configFile.readString();
+	server.send(200, "application/json", config);
+	configFile.close();
 }
 
 void handleGetSettings() {
-    auto settingsFile = SPIFFS.open("/settings", "r");
-    const auto settings = settingsFile.readString();
-    server.send(200, "application/json", settings);
-    settingsFile.close();
+	auto settingsFile = SPIFFS.open("/settings", "r");
+	const auto settings = settingsFile.readString();
+	server.send(200, "application/json", settings);
+	settingsFile.close();
 }
 
 void handleGetSerialNum() {
-    const auto serialNum = String(spi_flash_get_id());
-    server.send(200, "text/text", serialNum);
+	const auto serialNum = String(spi_flash_get_id());
+	server.send(200, "text/text", serialNum);
 }
 
 void handlePostIo() {
-    const auto postBody = server.arg("plain");
-    auto newConfigFile = SPIFFS.open("/ioconfig", "w");
-    newConfigFile.print(postBody);
-    newConfigFile.close();
+	const auto postBody = server.arg("plain");
+	auto newConfigFile = SPIFFS.open("/ioconfig", "w");
+	newConfigFile.print(postBody);
+	newConfigFile.close();
 
-    Serial.println("Post body");
-    Serial.print(postBody);
+	Serial.println("Post body");
+	Serial.print(postBody);
 
-    ESP.reset();
+	ESP.reset();
 }
 
 void handlePostSettings() {
-    const auto postBody = server.arg("plain");
-    auto newSettingsFile = SPIFFS.open("/settings", "w");
-    newSettingsFile.print(postBody);
-    newSettingsFile.close();
+	const auto postBody = server.arg("plain");
+	auto newSettingsFile = SPIFFS.open("/settings", "w");
+	newSettingsFile.print(postBody);
+	newSettingsFile.close();
 
-    Serial.println("Post body");
-    Serial.print(postBody);
+	Serial.println("Post body");
+	Serial.print(postBody);
 
-    ESP.reset();
+	ESP.reset();
 }
 
 void setupServer() {
-    server.on("/", HTTP_GET, handleGetSite);
+	server.on("/", HTTP_GET, handleGetSite);
 
-    server.on("/getioconfig", HTTP_GET, handleGetConfig);
-    server.on("/getsettings", HTTP_GET, handleGetSettings);
-    server.on("/getserialnum", HTTP_GET, handleGetSerialNum);
+	server.on("/getioconfig", HTTP_GET, handleGetConfig);
+	server.on("/getsettings", HTTP_GET, handleGetSettings);
+	server.on("/getserialnum", HTTP_GET, handleGetSerialNum);
 
-    server.on("/setioconfig", HTTP_POST, handlePostIo);
-    server.on("/setsettings", HTTP_POST, handlePostSettings);
+	server.on("/setioconfig", HTTP_POST, handlePostIo);
+	server.on("/setsettings", HTTP_POST, handlePostSettings);
 
-    server.begin();
+	server.begin();
 }
 
 void serverTask() { server.handleClient(); }

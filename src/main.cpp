@@ -6,17 +6,17 @@
 #include "settings.hpp"
 
 void setup() {
-    Serial.begin(921600);
-    SPIFFS.begin();
+	Serial.begin(9600);
+	SPIFFS.begin();
 
-    IOManager::the().setup();
+	IOManager::the().setup();
 
-    setupNetwork();
-    setupServer();
+	setupNetwork();
+	setupServer();
 }
 
 void loop() {
 
-    IOManager::the().loop();
-    serverTask();
+	IOManager::the().loop();
+	serverTask();
 }
