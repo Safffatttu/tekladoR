@@ -43,7 +43,9 @@
 			xhr.send(configText);
 		};
 
-		// let ob = JSON.parse('{"ports": [{"pin": "5","type": "0"},{"pin": "4","type": "1"}],"pairs": [{"name": "string","mode": 0,"inputPorts": [0],"outputPorts": [1]}]}');
+		// let exampleJson = '{"ports": [{"pin": "5","type": "0"},{"pin": "4","type": "1"}],"pairs": [{"name": "string","mode": 0,"inputPorts": [0],"outputPorts": [1]}]}';
+		// document.getElementById("ioText").value = exampleJson;
+		// let ob = JSON.parse(exampleJson);
 
 		function setIoTable(config) {
 			let portsTable = document.getElementById("portsTable");
@@ -107,12 +109,13 @@
 			ioConfigReq.open("GET", "/getioconfig", true);
 			ioConfigReq.onreadystatechange = function () {
 				if (ioConfigReq.readyState == 4 && ioConfigReq.status == 200) {
+					document.getElementById("ioText").value = ioConfigReq.responseText
 					setIoTable(JSON.parse(ioConfigReq.responseText));
 				}
 			};
 			ioConfigReq.send(null);
 
-			setIoTable(ob);
+			// setIoTable(ob);
 
 			var settingsConfigReq = new XMLHttpRequest();
 			settingsConfigReq.open("GET", "/getsettings", true);
@@ -186,6 +189,12 @@
 	<button onclick="uploadSettings()">Upload settings</button>
 	</p>
 
+	<label for="ioText">Io configuration</label>
+	<br>
+	<textarea id="ioText" name="IO configuration" rows="30" cols="40"></textarea>
+	<br>
+	<button onclick="uploadIoConfig()">Upload configuration</button>
+
 	<p>
 		Ports
 	<table id="portsTable">
@@ -204,10 +213,6 @@
 			<td>Outputs</td>
 		</tr>
 	</table>
-
-	<br>
-	<button onclick="uploadIoConfig()">Upload configuration</button>
-	</p>
 
 	<br>
 	<br>
