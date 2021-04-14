@@ -1,0 +1,24 @@
+{
+	"ports": [
+		{
+			"pin": "5",
+			"type": "0"
+		},
+		{
+			"pin": "4",
+			"type": "1"
+		}
+	],
+	"pairs": [
+		{
+			"name": "string",
+			"mode": 0,
+			"inputPorts": [
+				0
+			],
+			"outputPorts": [
+				1
+			]
+		}
+	]
+}
