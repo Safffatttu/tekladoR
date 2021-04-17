@@ -2,11 +2,15 @@
 	"ports": [
 		{
 			"pin": "5",
-			"type": "0"
+			"type": "0",
+			"device": "7",
+			"invert": false
 		},
 		{
 			"pin": "4",
-			"type": "1"
+			"type": "1",
+			"device": "7",
+			"invert": true
 		}
 	],
 	"pairs": [

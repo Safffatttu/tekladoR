@@ -46,9 +46,8 @@ void IOManager::setup() {
 	for (const auto &portRoot : portsRoot) {
 		auto const portData = portRoot.as<JsonObjectConst>();
 		const auto pin = portData["pin"].as<unsigned int>();
-		const auto type =
-		    portData["type"].as<int>() ? IOType::input : IOType::output;
-		const auto device = portData["device"].as<uint8_t>();
+		const auto type = portData["type"].as<int>() ? IOType::input : IOType::output;
+		const auto device = static_cast<DeviceType>(portData["device"].as<uint8_t>());
 		const auto invert = portData["invert"].as<bool>();
 
 		IOPort newPort(pin, type, device, invert);
@@ -63,27 +62,23 @@ void IOManager::setup() {
 		auto const pairData = pairRoot.as<JsonObjectConst>();
 
 		const auto name = pairData["name"].as<const char *>();
-		const auto mode = pairData["mode"].as<uint>()
-		                      ? TriggerMode::Momentary
-		                      : TriggerMode::Bistable;
+		const auto mode =
+		    pairData["mode"].as<uint>() ? TriggerMode::Momentary : TriggerMode::Bistable;
 
 		std::vector<IOPort *> inputs;
-		for (auto const port :
-		     pairData["inputPorts"].as<JsonArrayConst>()) {
+		for (auto const &port : pairData["inputPorts"].as<JsonArrayConst>()) {
 			const auto index = port.as<int>();
 
 			inputs.push_back(&ports[index]);
 		}
 
 		std::vector<IOPort *> outputs;
-		for (auto const port :
-		     pairData["outputPorts"].as<JsonArrayConst>()) {
+		for (auto const port : pairData["outputPorts"].as<JsonArrayConst>()) {
 			const auto index = port.as<int>();
 			outputs.push_back(&ports[index]);
 		}
 
-		IOPair newPair(std::move(inputs), std::move(outputs), name,
-		               mode);
+		IOPair newPair(std::move(inputs), std::move(outputs), name, mode);
 		pairs.push_back(std::move(newPair));
 	}
 
