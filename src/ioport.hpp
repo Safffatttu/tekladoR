@@ -35,9 +35,11 @@ public:
 
 	bool portRead() const;
 	void portWrite(bool state) const;
-	void setup() const;
+	void setup();
 
 	static void setupExpanders();
+
+	bool firstState;
 
 private:
 	const DeviceType deviceType;

@@ -34,7 +34,7 @@ void IOPort::portWrite(bool state) const {
 	}
 }
 
-void IOPort::setup() const {
+void IOPort::setup() {
 	uint8_t t = static_cast<uint8_t>(type);
 	if (deviceType == DeviceType::local) {
 		pinMode(pin, t);
@@ -43,6 +43,8 @@ void IOPort::setup() const {
 		auto &expander = expanders[expanderNumber];
 		expander.pinMode(pin, t);
 	}
+
+	firstState = portRead();
 }
 
 void IOPort::setupExpanders() {
@@ -53,5 +55,6 @@ void IOPort::setupExpanders() {
 		auto &expander = expanders[expanderNumber];
 		expander.begin(expanderNumber);
 	}
+
 	expandersToSetup.clear();
 }
