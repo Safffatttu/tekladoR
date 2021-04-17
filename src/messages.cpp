@@ -44,13 +44,13 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected &event) {
 void onMqttConnect(bool sessionPresent) {
 	Serial.println("Connected to MQTT.");
 	auto devieTopic = Settings::getInstance()->deviceTopic;
-	mqttClient.publish(devieTopic.append("deviceState").c_str(), 2, true,
-	                   "reconnected");
+	mqttClient.publish(devieTopic.append("deviceState").c_str(), 2, true, "reconnected");
 	subscribe(&mqttClient);
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
 	Serial.println("Disconnected from MQTT.");
+	Serial.printf("Mqtt client id: %s", mqttClient.getClientId());
 
 	if (WiFi.isConnected()) {
 		mqttReconnectTimer.once(2, connectToMqtt);
@@ -71,12 +71,10 @@ void onMqttUnsubscribe(uint16_t packetId) {
 	Serial.println(packetId);
 }
 
-void onMqttMessage(char *topic, char *payload,
-                   AsyncMqttClientMessageProperties properties, size_t len,
-                   size_t index, size_t total) {
+void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties,
+                   size_t len, size_t index, size_t total) {
 	const auto topicString = std::string(topic);
-	const auto payloadString =
-	    std::string(std::string(payload).substr(0, len));
+	const auto payloadString = std::string(std::string(payload).substr(0, len));
 	parseMessage(topicString, payloadString);
 
 	Serial.println("Publish received.");
@@ -109,21 +107,18 @@ void publishPairMqtt(const std::string &name, bool state) {
 	mqttClient.publish(name.c_str(), 2, true, stateToPublish);
 }
 
-void publishMqtt(const char *topic, uint8_t qos, bool retain,
-                 const char *payload) {
+void publishMqtt(const char *topic, uint8_t qos, bool retain, const char *payload) {
 	mqttClient.publish(topic, qos, retain, payload);
 }
 
 void setupNetwork() {
 	wifiConnectHandler = WiFi.onStationModeGotIP(onWifiConnect);
-	wifiDisconnectHandler =
-	    WiFi.onStationModeDisconnected(onWifiDisconnect);
+	wifiDisconnectHandler = WiFi.onStationModeDisconnected(onWifiDisconnect);
 
 	WiFi.mode(WiFiMode::WIFI_AP_STA);
 
 	// Reconfiguration acess point
-	const auto reconfigureSSID =
-	    "TEKLAD_R_RECONF_" + String(spi_flash_get_id());
+	const auto reconfigureSSID = "TEKLAD_R_RECONF_" + String(spi_flash_get_id());
 	const auto reconfigurePass = Settings::getInstance()->reconfigurePass;
 	WiFi.softAP(reconfigureSSID.c_str(), reconfigurePass.c_str(), 1, 1);
 
@@ -136,7 +131,6 @@ void setupNetwork() {
 	mqttClient.setServer(Settings::getInstance()->mqtt_host,
 	                     Settings::getInstance()->mqtt_port);
 	auto willTopic = Settings::getInstance()->deviceTopic;
-	mqttClient.setWill(willTopic.append("deviceState").c_str(), 2, true,
-	                   "disconnected");
+	mqttClient.setWill(willTopic.append("deviceState").c_str(), 2, true, "disconnected");
 	connectToWifi();
 }
