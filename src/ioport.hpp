@@ -4,7 +4,8 @@
 #include <Arduino.h>
 
 enum class IOType : uint8_t { input = 0, output = 1 };
-enum class RestingStateValue { low = 0, high = 1, firstValue = 2 };
+enum class RestingState : uint8_t { low = 0, high = 1, firstValue = 2 };
+enum class TriggerMode : uint8_t { Momentary = 0, Bistable = 1 };
 
 enum class DeviceType : uint8_t {
 	expander0,
@@ -31,21 +32,29 @@ inline uint8_t expanderNumberFromDeviceType(DeviceType type) {
 
 class IOPort {
 public:
-	IOPort(uint8_t pin, IOType type, DeviceType deviceType, bool invert = false);
+	IOPort(uint8_t pin, IOType type, DeviceType deviceType, TriggerMode mode, RestingState, bool invert = false);
 
 	bool portRead() const;
 	void portWrite(bool state) const;
 	void setup();
 
+	bool checkState();
+
 	static void setupExpanders();
 
-	bool firstState;
-
 private:
-	const DeviceType deviceType;
+	// Configuration
 	const uint8_t pin;
 	const IOType type;
+	const DeviceType deviceType;
+	const TriggerMode mode;
+	const RestingState restingState;
 	const bool invert;
+
+	// State
+	bool firstState;
+	bool firstCycle = true;
+	bool previousState;
 
 	static std::array<Adafruit_MCP23017, 8> expanders;
 };

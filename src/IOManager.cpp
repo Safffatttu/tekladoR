@@ -48,9 +48,11 @@ void IOManager::setup() {
 		const auto pin = portData["pin"].as<unsigned int>();
 		const auto type = portData["type"].as<int>() ? IOType::input : IOType::output;
 		const auto device = static_cast<DeviceType>(portData["device"].as<uint8_t>());
+		const auto triggerMode = static_cast<TriggerMode>(portData["triggerMode"].as<uint8_t>());
+		const auto restingState = static_cast<RestingState>(portData["restingState"].as<uint8_t>());
 		const auto invert = portData["invert"].as<bool>();
 
-		IOPort newPort(pin, type, device, invert);
+		IOPort newPort(pin, type, device, triggerMode, restingState, invert);
 		ports.push_back(newPort);
 	}
 
@@ -62,8 +64,6 @@ void IOManager::setup() {
 		auto const pairData = pairRoot.as<JsonObjectConst>();
 
 		const auto name = pairData["name"].as<const char *>();
-		const auto mode =
-		    pairData["mode"].as<uint>() ? TriggerMode::Momentary : TriggerMode::Bistable;
 
 		std::vector<IOPort *> inputs;
 		for (auto const &port : pairData["inputPorts"].as<JsonArrayConst>()) {
@@ -78,7 +78,7 @@ void IOManager::setup() {
 			outputs.push_back(&ports[index]);
 		}
 
-		IOPair newPair(std::move(inputs), std::move(outputs), name, mode);
+		IOPair newPair(std::move(inputs), std::move(outputs), name);
 		pairs.push_back(std::move(newPair));
 	}
 

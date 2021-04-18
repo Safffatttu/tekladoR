@@ -9,8 +9,9 @@ std::array<Adafruit_MCP23017, 8> IOPort::expanders;
 
 static std::set<DeviceType> expandersToSetup;
 
-IOPort::IOPort(uint8_t pin, IOType type, DeviceType deviceType, bool invert)
-    : deviceType(deviceType), pin(pin), type(type), invert(invert) {
+IOPort::IOPort(uint8_t pin, IOType type, DeviceType deviceType, TriggerMode mode, RestingState restingState,
+               bool invert)
+    : pin(pin), type(type), deviceType(deviceType), mode(mode), restingState(restingState), invert(invert) {
 	expandersToSetup.emplace(deviceType);
 }
 
@@ -45,6 +46,7 @@ void IOPort::setup() {
 	}
 
 	firstState = portRead();
+	previousState = firstState;
 }
 
 void IOPort::setupExpanders() {
@@ -57,4 +59,42 @@ void IOPort::setupExpanders() {
 	}
 
 	expandersToSetup.clear();
+}
+
+bool IOPort::checkState() {
+	bool newState = portRead();
+
+	if (mode == TriggerMode::Momentary) {
+
+		bool activeState;
+
+		switch (restingState) {
+		case RestingState::low:
+			activeState = 0;
+			break;
+		case RestingState::high:
+			activeState = 1;
+			break;
+		case RestingState::firstValue:
+			activeState = firstState;
+			break;
+		}
+
+		if (newState == activeState) {
+			if (firstCycle) {
+				firstCycle = false;
+				return true;
+			}
+		} else {
+			firstCycle = true;
+		}
+
+		return false;
+	} else if (mode == TriggerMode::Bistable) {
+		if (newState != previousState) {
+			previousState != previousState;
+			return true;
+		}
+		return false;
+	}
 }

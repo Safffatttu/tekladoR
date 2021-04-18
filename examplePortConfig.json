@@ -1,15 +1,19 @@
 {
 	"ports": [
 		{
-			"pin": "5",
-			"type": "0",
-			"device": "7",
+			"pin": 5,
+			"type": 0,
+			"device": 7,
+			"triggerMode": 0,
+			"restingState": 0,
 			"invert": false
 		},
 		{
-			"pin": "4",
-			"type": "1",
-			"device": "7",
+			"pin": 4,
+			"type": 1,
+			"device": 7,
+			"triggerMode": 1,
+			"restingState": 1,
 			"invert": true
 		}
 	],
