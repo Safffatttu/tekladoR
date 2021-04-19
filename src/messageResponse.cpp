@@ -6,9 +6,19 @@
 #include "settings.hpp"
 
 void parseIoMessage(const std::string &topic, const std::string &payload) {
-	if (payload.size() == 0)
+	if (payload.size() == 0 || payload.size() > 1) {
+		Serial.printf("Invalid payload size for iomessage.\nTopic: %s\nPayload:  %s\n", topic.c_str(),
+		              payload.c_str());
 		return;
-	int newState = atoi(payload.c_str());
+	}
+
+	if (payload[0] != '0' || payload[1] != '1') {
+		Serial.printf("Invalid payload for iomessage.\nTopic: %s\nPayload:  %s\n", topic.c_str(),
+		              payload.c_str());
+		return;
+	}
+
+	bool newState = payload[0] == '1';
 
 	for (auto &pair : IOManager::the().getPairs()) {
 		if (pair.name == topic) {
@@ -27,8 +37,7 @@ void parseAnimationMessage(const std::string &topic, const char *payload) {
 	int animationControll = atoi(payload);
 	auto positionOfNumber = topic.find_last_of("/");
 	auto animationNumberString = topic.substr(positionOfNumber + 1);
-	int animationNumber =
-	    strtoul(animationNumberString.c_str(), nullptr, 10);
+	int animationNumber = strtoul(animationNumberString.c_str(), nullptr, 10);
 
 	if (animationControll == 0) {
 		AnimationStore::getInstance()->stopAnimation();
