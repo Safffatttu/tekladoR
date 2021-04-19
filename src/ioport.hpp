@@ -24,7 +24,7 @@ inline uint8_t expanderNumberFromDeviceType(DeviceType type) {
 	uint8_t deviceNumber = static_cast<uint8_t>(type);
 	uint8_t maxNumber = static_cast<uint8_t>(DeviceType::local);
 
-	if (deviceNumber <= maxNumber)
+	if (deviceNumber >= maxNumber)
 		abort(); // TODO Handle this case
 
 	return deviceNumber;
