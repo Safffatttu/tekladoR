@@ -43,8 +43,8 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected &event) {
 
 void onMqttConnect(bool sessionPresent) {
 	Serial.println("Connected to MQTT.");
-	auto devieTopic = Settings::getInstance()->deviceTopic;
-	mqttClient.publish(devieTopic.append("deviceState").c_str(), 2, true, "reconnected");
+	const auto &stateTopic = Settings::getInstance()->stateTopic;
+	mqttClient.publish(stateTopic.c_str(), 2, true, "reconnected");
 	subscribe(&mqttClient);
 }
 
@@ -129,9 +129,8 @@ void setupNetwork() {
 	mqttClient.onUnsubscribe(onMqttUnsubscribe);
 	mqttClient.onMessage(onMqttMessage);
 	mqttClient.onPublish(onMqttPublish);
-	mqttClient.setServer(Settings::getInstance()->mqtt_host,
-	                     Settings::getInstance()->mqtt_port);
-	auto willTopic = Settings::getInstance()->deviceTopic;
-	mqttClient.setWill(willTopic.append("deviceState").c_str(), 2, true, "disconnected");
+	mqttClient.setServer(Settings::getInstance()->mqtt_host, Settings::getInstance()->mqtt_port);
+	const auto &stateTopic = Settings::getInstance()->stateTopic;
+	mqttClient.setWill(stateTopic.c_str(), 2, true, "disconnected");
 	connectToWifi();
 }

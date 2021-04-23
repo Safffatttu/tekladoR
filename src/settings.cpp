@@ -28,6 +28,7 @@ Settings::Settings() {
 
 void Settings::loadDefaults() {
 	deviceTopic = defaults::deviceTopic;
+	stateTopic = std::string(deviceTopic).append("/deviceState");
 	wifi_ssid = defaults::wifi_ssid;
 	wifi_password = defaults::wifi_password;
 	mqtt_host = defaults::mqtt_host;
@@ -70,6 +71,7 @@ void Settings::loadSettings() {
 	auto settingsObj = settingsDoc.as<JsonObjectConst>();
 
 	deviceTopic = settingsObj["deviceTopic"].as<const char *>();
+	stateTopic = deviceTopic.append("/deviceState");
 	wifi_ssid = settingsObj["wifi_ssid"].as<const char *>();
 	wifi_password = settingsObj["wifi_password"].as<const char *>();
 	const auto mqtt_host_string = settingsObj["mqtt_host"].as<const char *>();
