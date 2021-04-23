@@ -72,8 +72,8 @@ void Settings::loadSettings() {
 	deviceTopic = settingsObj["deviceTopic"].as<const char *>();
 	wifi_ssid = settingsObj["wifi_ssid"].as<const char *>();
 	wifi_password = settingsObj["wifi_password"].as<const char *>();
-	const auto mqtt_host_string =
-	    settingsObj["mqtt_host"].as<const char *>();
-	mqtt_host = IPAddress().fromString(mqtt_host_string);
+	const auto mqtt_host_string = settingsObj["mqtt_host"].as<const char *>();
+	mqtt_host = IPAddress();
+	mqtt_host.fromString(mqtt_host_string);
 	mqtt_port = settingsObj["mqtt_port"].as<uint>();
 }
