@@ -15,6 +15,7 @@ public:
 	static Settings *getInstance();
 
 	std::string deviceTopic;
+	std::string stateTopic;
 	std::string wifi_ssid;
 	std::string wifi_password;
 	IPAddress mqtt_host;
