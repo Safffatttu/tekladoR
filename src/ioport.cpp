@@ -54,7 +54,7 @@ void IOPort::portWrite(bool state) const {
 void IOPort::setup() {
 	uint8_t t = static_cast<uint8_t>(type);
 	if (deviceType == DeviceType::local) {
-		auto gpioPin = pinNameToGpioPinMap[pin];
+		auto gpioPin = pinNumberToGpio[pin];
 		pinMode(gpioPin, t);
 	} else {
 		const auto expanderNumber = expanderNumberFromDeviceType(deviceType);
@@ -109,7 +109,7 @@ bool IOPort::checkState() {
 		return false;
 	} else if (mode == TriggerMode::Bistable) {
 		if (newState != previousState) {
-			previousState != previousState;
+			previousState = !previousState;
 			return true;
 		}
 		return false;
