@@ -12,7 +12,7 @@ void parseIoMessage(const std::string &topic, const std::string &payload) {
 		return;
 	}
 
-	if (payload[0] != '0' || payload[1] != '1') {
+	if (payload[0] != '0' && payload[0] != '1') {
 		Serial.printf("Invalid payload for iomessage.\nTopic: %s\nPayload:  %s\n", topic.c_str(),
 		              payload.c_str());
 		return;
