@@ -46,7 +46,7 @@ void IOManager::setup() {
 	for (const auto &portRoot : portsRoot) {
 		auto const portData = portRoot.as<JsonObjectConst>();
 		const auto pin = portData["pin"].as<unsigned int>();
-		const auto type = portData["type"].as<int>() ? IOType::input : IOType::output;
+		const auto type = portData["type"].as<int>() ? IOType::output : IOType::input;
 		const auto device = static_cast<DeviceType>(portData["device"].as<uint8_t>());
 		const auto triggerMode = static_cast<TriggerMode>(portData["triggerMode"].as<uint8_t>());
 		const auto restingState = static_cast<RestingState>(portData["restingState"].as<uint8_t>());
