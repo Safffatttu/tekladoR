@@ -30,8 +30,8 @@ void IOPair::checkState() {
 			state = !state;
 			for (auto outputPort : outputPorts) {
 				outputPort->portWrite(state);
-				updateMqttState();
 			}
+			updateMqttState();
 		}
 	}
 }
