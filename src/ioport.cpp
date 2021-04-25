@@ -14,10 +14,25 @@ IOPort::IOPort(uint8_t pin, IOType type, DeviceType deviceType, TriggerMode mode
     : pin(pin), type(type), deviceType(deviceType), mode(mode), restingState(restingState), invert(invert) {
 	expandersToSetup.emplace(deviceType);
 }
+// D -> GPIO
+uint8_t pinNumberToGpio[11] = {
+    16, // 0
+    5,  // 1
+    4,  // 2
+    0,  // 3
+    2,  // 4
+    14, // 5
+    12, // 6
+    13, // 7
+    15, // 8
+    3,  // 9
+    1   // 10
+};
 
 bool IOPort::portRead() const {
 	if (deviceType == DeviceType::local) {
-		return digitalRead(pin);
+		auto gpioPin = pinNumberToGpio[pin];
+		return digitalRead(gpioPin);
 	} else {
 		const auto expanderNumber = expanderNumberFromDeviceType(deviceType);
 		auto &expander = expanders[expanderNumber];
@@ -27,7 +42,8 @@ bool IOPort::portRead() const {
 
 void IOPort::portWrite(bool state) const {
 	if (deviceType == DeviceType::local) {
-		digitalWrite(pin, invert ^ state);
+		auto gpioPin = pinNumberToGpio[pin];
+		digitalWrite(gpioPin, invert ^ state);
 	} else {
 		const auto expanderNumber = expanderNumberFromDeviceType(deviceType);
 		auto &expander = expanders[expanderNumber];
@@ -38,7 +54,8 @@ void IOPort::portWrite(bool state) const {
 void IOPort::setup() {
 	uint8_t t = static_cast<uint8_t>(type);
 	if (deviceType == DeviceType::local) {
-		pinMode(pin, t);
+		auto gpioPin = pinNameToGpioPinMap[pin];
+		pinMode(gpioPin, t);
 	} else {
 		const auto expanderNumber = expanderNumberFromDeviceType(deviceType);
 		auto &expander = expanders[expanderNumber];
