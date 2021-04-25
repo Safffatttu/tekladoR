@@ -12,9 +12,8 @@ void subscribeToPairs(AsyncMqttClient *mqttClient) {
 }
 
 void subscribeToAnimations(AsyncMqttClient *mqttClient) {
-	std::string subscribe =
-	    std::string(Settings::getInstance()->deviceTopic);
-	subscribe.append("animation/#");
+	const auto &deviceTopic = Settings::getInstance()->deviceTopic;
+	auto subscribe = std::string(deviceTopic).append("/animation/#");
 	mqttClient->subscribe(subscribe.c_str(), 2);
 }
 

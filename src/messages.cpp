@@ -1,6 +1,7 @@
 #include <AsyncMqttClient.hpp>
 #include <ESP8266WiFi.h>
 #include <Ticker.h>
+#include <queue>
 #include <string>
 
 #include "messageResponse.hpp"
@@ -15,6 +16,32 @@ Ticker wifiReconnectTimer;
 
 WiFiEventHandler wifiConnectHandler;
 WiFiEventHandler wifiDisconnectHandler;
+
+struct Message {
+
+	Message(std::string topic, std::string payload, AsyncMqttClientMessageProperties properties, size_t len,
+	        size_t index, size_t total)
+	    : topic(std::move(topic)), payload(std::move(payload)), properties(properties), len(len), index(index),
+	      total(total){};
+
+	std::string topic;
+	std::string payload;
+	AsyncMqttClientMessageProperties properties;
+	size_t len;
+	size_t index;
+	size_t total;
+};
+
+std::queue<Message> messageQueue;
+
+void messageLoop() {
+	if (messageQueue.empty())
+		return;
+
+	auto &msg = messageQueue.front();
+	parseMessage(msg.topic, msg.payload);
+	messageQueue.pop();
+}
 
 void connectToWifi() {
 	Serial.println("Connecting to Wi-Fi...");
@@ -75,9 +102,9 @@ void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties 
                    size_t total) {
 	const auto topicString = std::string(topic);
 	const auto payloadString = std::string(payload, (size_t)len);
+	messageQueue.emplace(std::move(topicString), std::move(payloadString), properties, len, index, total);
 
-	parseMessage(topicString, payloadString);
-
+#ifdef MQTT_DEBUG_MESSAGE
 	Serial.println("Publish received.");
 	Serial.print("  topic: ");
 	Serial.println(topic);
@@ -93,6 +120,7 @@ void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties 
 	Serial.println(index);
 	Serial.print("  total: ");
 	Serial.println(total);
+#endif // MQTT_DEBUG
 }
 
 void onMqttPublish(uint16_t packetId) {

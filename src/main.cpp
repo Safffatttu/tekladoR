@@ -19,4 +19,5 @@ void loop() {
 
 	IOManager::the().loop();
 	serverTask();
+	messageLoop();
 }
